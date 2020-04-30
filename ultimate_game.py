@@ -31,13 +31,61 @@ class Game:
         self.trainingHistory = []
 
     def resetBoard(self):
+        self.miniBoard1 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.miniBoard2 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.miniBoard3 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.miniBoard4 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.miniBoard5 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.miniBoard6 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.miniBoard7 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.miniBoard8 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.miniBoard9 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        self.fullBoard = [[self.miniBoard1,self.miniBoard2,self.miniBoard3],
+                          [self.miniBoard4,self.miniBoard5,self.miniBoard6],
+                          [self.miniBoard7,self.miniBoard8,self.miniBoard9],]
         self.board = [
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]
         ]
         self.boardHistory = []
-
+#havent upgraded this function
     def printBoard(self):
         print(VERTICAL_SEPARATOR)
         for i in range(len(self.board)):
@@ -95,18 +143,76 @@ class Game:
 
         return GAME_STATE_DRAW
 
+    def getMiniGameResult(self, miniBoard):
+# =============================================================================
+#         checks results for a specified miniBoard
+# =============================================================================
+        for i in range(len(miniBoard)):
+            for j in range(len(miniBoard[i])):
+                if miniBoard[i][j] == EMPTY_VAL:
+                    return GAME_STATE_NOT_ENDED
 
+        # Rows
+        for i in range(len(miniBoard)):
+            candidate = miniBoard[i][0]
+            for j in range(len(miniBoard[i])):
+                if candidate != miniBoard[i][j]:
+                    candidate = 0
+            if candidate != 0:
+                return candidate
+
+        # Columns
+        for i in range(len(miniBoard)):
+            candidate = miniBoard[0][i]
+            for j in range(len(miniBoard[i])):
+                if candidate != miniBoard[j][i]:
+                    candidate = 0
+            if candidate != 0:
+                return candidate
+
+        # First diagonal
+        candidate = miniBoard[0][0]
+        for i in range(len(miniBoard)):
+            if candidate != miniBoard[i][i]:
+                candidate = 0
+        if candidate != 0:
+            return candidate
+
+        # Second diagonal
+        candidate = miniBoard[0][2]
+        for i in range(len(miniBoard)):
+            if candidate != miniBoard[i][len(miniBoard[i]) - i - 1]:
+                candidate = 0
+        if candidate != 0:
+            return candidate
+
+        return GAME_STATE_DRAW
+    
     def getAvailableMoves(self):
+# =============================================================================
+#         only looks at the macro board
+# =============================================================================
         availableMoves = []
         for i in range(len(self.board)):
             for j in range(len(self.board[i])):
                 if (self.board[i][j]) == EMPTY_VAL:
                     availableMoves.append([i, j])
         return availableMoves
-
+    def getAllAvailableMoves(self):
+# =============================================================================
+#         looks for all available moves in the full board
+# =============================================================================
+        allAvailableMoves = []
+        for i in range(len(self.fullBoard)):
+            for j in range(len(self.fullBoard[i])):
+                for k in range(len(self.fullBoard[j])):
+                    if (self.fullBoard[i][j][k]) == EMPTY_VAL:
+                        allAvailableMoves.append([i, j, k])
+        return allAvailableMoves
+#havent upgraded this function
     def addToHistory(self, board):
         self.boardHistory.append(board)
-
+#havent upgraded this function
     def printHistory(self):
         print(self.boardHistory)
 
@@ -116,7 +222,17 @@ class Game:
             if position[0] == availableMoves[i][0] and position[1] == availableMoves[i][1]:
                 self.board[position[0]][position[1]] = player
                 self.addToHistory(copy.deepcopy(self.board))
-
+    
+    def miniMove(self, position, player):
+# =============================================================================
+#         move function in the full board
+#        still working on this one
+# =============================================================================
+        allAvailableMoves = self.getAllAvailableMoves()
+        for i in range(len(allAvailableMoves)):
+            if position[0] == allAvailableMoves[i][0] and position[1] == allAvailableMoves[i][1]:
+                self.board[position[0]][position[1]] = player
+                self.addToHistory(copy.deepcopy(self.board))
 
     def simulate(self, playerToMove):
         while (self.getGameResult() == GAME_STATE_NOT_ENDED):
