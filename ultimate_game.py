@@ -78,7 +78,7 @@ class Game:
         ]
         self.fullBoard = [[self.miniBoard1,self.miniBoard2,self.miniBoard3],
                           [self.miniBoard4,self.miniBoard5,self.miniBoard6],
-                          [self.miniBoard7,self.miniBoard8,self.miniBoard9],]
+                          [self.miniBoard7,self.miniBoard8,self.miniBoard9]]
         self.macroBoard = [
             [0, 0, 0],
             [0, 0, 0],
@@ -206,8 +206,9 @@ class Game:
         for i in range(len(self.fullBoard)):
             for j in range(len(self.fullBoard[i])):
                 for k in range(len(self.fullBoard[j])):
-                    if (self.fullBoard[i][j][k]) == EMPTY_VAL:
-                        allAvailableMoves.append([i, j, k])
+                    for l in range(len(self.fullBoard[k])):
+                        if (self.fullBoard[i][j][k]) == EMPTY_VAL:
+                            allAvailableMoves.append([i, j, k, l])
         return allAvailableMoves
 #havent upgraded this function
     def addToHistory(self, board):
@@ -223,16 +224,138 @@ class Game:
                 self.macroBoard[position[0]][position[1]] = player
                 self.addToHistory(copy.deepcopy(self.macroBoard))
     
-    def miniMove(self, position, player):
+    def miniMove(self, position, player, restriction):
 # =============================================================================
 #         move function in the full board
+#        restrictions come in the form of a list with two elements (0,0), which tells you 
+#        which mini board you can play on and are determined by opponents previous
+#        play. Example opponent plays top left corner, restriction is (0,0) for
+#        miniBoard1, or they play top right corner, restriction is (0,2) for
+#        miniBoard3
+#        
+#        this function records moves on the full board and the correct miniboard
+#        it also checks to see if a move leads to a corresponding win of a miniboard 
+#        which is then recorded on the macroboard
 # =============================================================================
         allAvailableMoves = self.getAllAvailableMoves()
+        if restriction[0] == 0:
+            if restriction[1] == 0:
+                if self.getMiniGameResult(self.miniBoard1) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 1:
+                if self.getMiniGameResult(self.miniBoard2) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 2:
+                if self.getMiniGameResult(self.miniBoard3) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+        if restriction[0] == 1:
+            if restriction[1] == 0:
+                if self.getMiniGameResult(self.miniBoard4) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 1:
+                if self.getMiniGameResult(self.miniBoard5) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 2:
+                if self.getMiniGameResult(self.miniBoard6) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+        if restriction[0] == 2:
+            if restriction[1] == 0:
+                if self.getMiniGameResult(self.miniBoard7) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 1:
+                if self.getMiniGameResult(self.miniBoard8) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 2:
+                if self.getMiniGameResult(self.miniBoard9) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+                        
         for i in range(len(allAvailableMoves)):
-            if position[0] == allAvailableMoves[i][0] and position[1] == allAvailableMoves[i][1] and position[2] == allAvailableMoves[i][2]:
-                self.fullBoard[position[0]][position[1][position[2]] = player
+            if restriction != None:
+                if position[0] == allAvailableMoves[i][0] == restriction[0] and position[1] == allAvailableMoves[i][1] == restriction[1] and position[2] == allAvailableMoves[i][2] and position[3] == allAvailableMoves[i][3]:
+                    self.fullBoard[position[0]][position[1]][position[2]][position[3]] = player
+                    if restriction[0] == 0:
+                        if restriction[1] == 0:
+                            self.miniBoard1[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard1) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard1)
+                        if restriction[1] == 1:
+                            self.miniBoard2[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard2) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard2)
+                        if restriction[1] == 2:
+                            self.miniBoard3[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard3) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard3)
+                    if restriction[0] == 1:
+                        if restriction[1] == 0:
+                            self.miniBoard4[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard4) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard4)
+                        if restriction[1] == 1:
+                            self.miniBoard5[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard5) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard5)
+                        if restriction[1] == 2:
+                            self.miniBoard6[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard6) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard6)
+                    if restriction[0] == 2:
+                        if restriction[1] == 0:
+                            self.miniBoard7[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard7) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard7)
+                        if restriction[1] == 1:
+                            self.miniBoard8[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard8) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard8)
+                        if restriction[1] == 2:
+                            self.miniBoard9[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard9) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard9)
+            else:
+                if position[0] == allAvailableMoves[i][0] and position[1] == allAvailableMoves[i][1] and position[2] == allAvailableMoves[i][2] and position[3] == allAvailableMoves[i][3]:
+                    self.fullBoard[position[0]][position[1]][position[2]][position[3]] = player
+                    if restriction[0] == 0:
+                        if restriction[1] == 0:
+                            self.miniBoard1[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard1) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard1)
+                        if restriction[1] == 1:
+                            self.miniBoard2[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard2) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard2)
+                        if restriction[1] == 2:
+                            self.miniBoard3[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard3) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard3)
+                    if restriction[0] == 1:
+                        if restriction[1] == 0:
+                            self.miniBoard4[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard4) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard4)
+                        if restriction[1] == 1:
+                            self.miniBoard5[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard5) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard5)
+                        if restriction[1] == 2:
+                            self.miniBoard6[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard6) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard6)
+                    if restriction[0] == 2:
+                        if restriction[1] == 0:
+                            self.miniBoard7[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard7) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard7)
+                        if restriction[1] == 1:
+                            self.miniBoard8[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard8) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard8)
+                        if restriction[1] == 2:
+                            self.miniBoard9[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard9) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard9)
                 self.addToHistory(copy.deepcopy(self.fullBoard))
-
+                
     def simulate(self, playerToMove):
 # =============================================================================
 #         simulates game with players moving randomly, using macro board
