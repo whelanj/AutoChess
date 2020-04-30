@@ -230,10 +230,13 @@ class Game:
         allAvailableMoves = self.getAllAvailableMoves()
         for i in range(len(allAvailableMoves)):
             if position[0] == allAvailableMoves[i][0] and position[1] == allAvailableMoves[i][1] and position[2] == allAvailableMoves[i][2]:
-                self.fullBoard[position[0]][position[1]position[2]] = player
+                self.fullBoard[position[0]][position[1][position[2]] = player
                 self.addToHistory(copy.deepcopy(self.fullBoard))
 
     def simulate(self, playerToMove):
+# =============================================================================
+#         simulates game with players moving randomly, using macro board
+# =============================================================================
         while (self.getGameResult() == GAME_STATE_NOT_ENDED):
             availableMoves = self.getAvailableMoves()
             selectedMove = availableMoves[random.randrange(0, len(availableMoves))]
@@ -245,8 +248,27 @@ class Game:
         # Get the history and build the training set
         for historyItem in self.macroBoardHistory:
             self.trainingHistory.append((self.getGameResult(), copy.deepcopy(historyItem)))
+    
+    def fullSimulate(self, playerToMove):
+# =============================================================================
+#         simulates game with players moving randomly, using full ultimate board
+# =============================================================================
+        while (self.getGameResult() == GAME_STATE_NOT_ENDED):
+            allAvailableMoves = self.getAllAvailableMoves()
+            selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+            self.move(selectedMove, playerToMove)
+            if playerToMove == PLAYER_X_VAL:
+                playerToMove = PLAYER_O_VAL
+            else:
+                playerToMove = PLAYER_X_VAL
+        # Get the history and build the training set
+        for historyItem in self.macroBoardHistory:
+            self.trainingHistory.append((self.getGameResult(), copy.deepcopy(historyItem)))
 
     def simulateNeuralNetwork(self, nnPlayer, model):
+# =============================================================================
+#         simulates game with players moving randomly, using macro board
+# =============================================================================
         playerToMove = PLAYER_X_VAL
         while (self.getGameResult() == GAME_STATE_NOT_ENDED):
             availableMoves = self.getAvailableMoves()
@@ -272,11 +294,43 @@ class Game:
                 playerToMove = PLAYER_O_VAL
             else:
                 playerToMove = PLAYER_X_VAL
-
+    def fullSimulateNeuralNetwork(self, nnPlayer, model):
+# =============================================================================
+#         simulates game with players moving from learning experience, using full ultimate board
+# =============================================================================
+        playerToMove = PLAYER_X_VAL
+        while (self.getGameResult() == GAME_STATE_NOT_ENDED):
+            allAvailableMoves = self.getAllAvailableMoves()
+            if playerToMove == nnPlayer:
+                maxValue = 0
+                bestMove = allAvailableMoves[0]
+                for availableMove in allAvailableMoves:
+                    # get a copy of a board
+                    boardCopy = copy.deepcopy(self.fullBoard)
+                    boardCopy[availableMove[0]][availableMove[1]][availableMove[2]] = nnPlayer
+                    if nnPlayer == PLAYER_X_VAL:
+                        value = model.predict(boardCopy, 0)
+                    else:
+                        value = model.predict(boardCopy, 2)
+                    if value > maxValue:
+                        maxValue = value
+                        bestMove = availableMove
+                selectedMove = bestMove
+            else:
+                selectedMove = allAvailableMoves[random.randrange(0, len(availableMoves))]
+            self.move(selectedMove, playerToMove)
+            if playerToMove == PLAYER_X_VAL:
+                playerToMove = PLAYER_O_VAL
+            else:
+                playerToMove = PLAYER_X_VAL
+#    skipped this function
     def getTrainingHistory(self):
         return self.trainingHistory
 
     def simulateManyGames(self, playerToMove, numberOfGames):
+# =============================================================================
+#         simulates many games with only random players and just macro board
+# =============================================================================
         playerXWins = 0
         playerOWins = 0
         draws = 0
@@ -292,9 +346,31 @@ class Game:
         print ('X Wins: ' + str(int(playerXWins * 100/totalWins)) + '%')
         print('O Wins: ' + str(int(playerOWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
+    def fullSimulateManyGames(self, playerToMove, numberOfGames):
+# =============================================================================
+#         simulates many games with only random players and the full board
+# =============================================================================
+        playerXWins = 0
+        playerOWins = 0
+        draws = 0
+        for i in range(numberOfGames):
+            self.resetBoard()
+            self.fullSimulate(playerToMove)
+            if self.getGameResult() == PLAYER_X_VAL:
+                playerXWins = playerXWins + 1
+            elif self.getGameResult() == PLAYER_O_VAL:
+                playerOWins = playerOWins + 1
+            else: draws = draws + 1
+        totalWins = playerXWins + playerOWins + draws
+        print ('X Wins: ' + str(int(playerXWins * 100/totalWins)) + '%')
+        print('O Wins: ' + str(int(playerOWins * 100 / totalWins)) + '%')
+        print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
 
 
     def simulateManyNeuralNetworkGames(self, nnPlayer, numberOfGames, model):
+# =============================================================================
+#         simulates many games with only random players and just the macro board
+# =============================================================================
         nnPlayerWins = 0
         randomPlayerWins = 0
         draws = 0
@@ -312,13 +388,34 @@ class Game:
         print ('X Wins: ' + str(int(nnPlayerWins * 100/totalWins)) + '%')
         print('O Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
+    def simulateManyNeuralNetworkGames(self, nnPlayer, numberOfGames, model):
+# =============================================================================
+#         simulates many games with only random players and the full board
+# =============================================================================
+        nnPlayerWins = 0
+        randomPlayerWins = 0
+        draws = 0
+        print ("NN player")
+        print (nnPlayer)
+        for i in range(numberOfGames):
+            self.resetBoard()
+            self.fullSimulateNeuralNetwork(nnPlayer, model)
+            if self.getGameResult() == nnPlayer:
+                nnPlayerWins = nnPlayerWins + 1
+            elif self.getGameResult() == GAME_STATE_DRAW:
+                draws = draws + 1
+            else: randomPlayerWins = randomPlayerWins + 1
+        totalWins = nnPlayerWins + randomPlayerWins + draws
+        print ('X Wins: ' + str(int(nnPlayerWins * 100/totalWins)) + '%')
+        print('O Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
+        print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
 
 if __name__ == "__main__":
     game = Game()
-    game.simulateManyGames(1, 10000)
+    game.fullSimulateManyGames(1, 10000)
     ticTacToeModel = TicTacToeModel(9, 3, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
     print ("Simulating with Neural Network as X Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 10000, ticTacToeModel)
+    game.fullSimulateManyNeuralNetworkGames(PLAYER_X_VAL, 10000, ticTacToeModel)
     print("Simulating with Neural Network as O Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 10000, ticTacToeModel)
+    game.fullSimulateManyNeuralNetworkGames(PLAYER_O_VAL, 10000, ticTacToeModel)
