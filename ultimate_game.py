@@ -207,7 +207,7 @@ class Game:
             for j in range(len(self.fullBoard[i])):
                 for k in range(len(self.fullBoard[j])):
                     for l in range(len(self.fullBoard[k])):
-                        if (self.fullBoard[i][j][k]) == EMPTY_VAL:
+                        if (self.fullBoard[i][j][k][l]) == EMPTY_VAL:
                             allAvailableMoves.append([i, j, k, l])
         return allAvailableMoves
 #havent upgraded this function
@@ -430,7 +430,7 @@ class Game:
                 for availableMove in allAvailableMoves:
                     # get a copy of a board
                     boardCopy = copy.deepcopy(self.fullBoard)
-                    boardCopy[availableMove[0]][availableMove[1]][availableMove[2]] = nnPlayer
+                    boardCopy[availableMove[0]][availableMove[1]][availableMove[2]][availableMove[3]] = nnPlayer
                     if nnPlayer == PLAYER_X_VAL:
                         value = model.predict(boardCopy, 0)
                     else:
