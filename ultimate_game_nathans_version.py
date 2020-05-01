@@ -574,6 +574,30 @@ class Game():
                 playerToMove = PLAYER_O_VAL
             else:
                 playerToMove = PLAYER_X_VAL
+    def getRowAndColumn(self, block_number):
+        block_choice = 'invalid'
+        while block_choice == 'invalid':
+            if block_number in [1,2,3,4,5,6,7,8,9]:
+                block_choice = 'valid'
+            else:
+                block_number = int(input('Choice was invalid--Please choose a number between 1 and 9: '))
+        if str(block_number) in '123':
+            row = 0
+        elif str(block_number) in '456':
+            row = 1
+        elif str(block_number) in '789':
+            row = 2
+        else: 
+            block_number = int(input('Choice was invalid--Please choose a number between 1 and 9: '))
+            
+        if str(block_number) in '147':
+            column = 0
+        elif str(block_number) in '258':
+            column = 1
+        elif str(block_number) in '369':
+            column = 2
+        return row,column
+    
     def personVsAIgame(self, nnPlayer, model):
         # =============================================================================
         #         real human can play a game against the AI, using full ultimate board
@@ -612,8 +636,7 @@ class Game():
                 print('You must play on board {}'.format(board_index))
                 moveValidity = 'invalid'
                 while moveValidity == 'invalid':
-                    selectedRow = int(input('Please choose a row (0 for top, 1 for middle and 2 for bottom): '))
-                    selectedColumn = int(input('Please choose a column (0 for left, 1 for middle and 2 for right): '))
+                    selectedRow, selectedColumn = self.getRowAndColumn(int(input('Please choose an empty block to play in: ')))
                     selectedMove = [selectedRow,selectedColumn]
                     if selectedMove in allAvailableMoves:
                         moveValidity = 'valid'
@@ -708,7 +731,7 @@ class Game():
         draws = 0
         print("NN player")
         print(nnPlayer)
-        person = input('Do you want to play?')
+        person = input('Do you want to play? ')
         while person != 'No':
             self.resetBoard()
             self.personVsAIgame(nnPlayer, model)
@@ -719,7 +742,7 @@ class Game():
                 draws = draws + 1
             else:
                 humanPlayerWins = humanPlayerWins + 1
-            person = input('Do you want to play again?: say "No" if not')
+            person = input('Do you want to play again?: say "No" if not ')
         totalWins = nnPlayerWins + humanPlayerWins + draws
         print('X Wins: ' + str(int(nnPlayerWins * 100 / totalWins)) + '%')
         print('O Wins: ' + str(int(humanPlayerWins * 100 / totalWins)) + '%')
