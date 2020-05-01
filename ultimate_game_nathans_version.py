@@ -603,7 +603,7 @@ class Game():
             else:
                 print("Puny human dares to play against the mighty AI!")
                 moveValidity = 'invalid'
-                while moveValidity == 'invalid'
+                while moveValidity == 'invalid':
                     selectedRow = int(input('Please choose a row: 0 for top, 1 for middle and 2 for bottom'))
                     selectedColumn = int(input('Please choose a column: 0 for left, 1 for middle and 2 for right'))
                     selectedMove = [selectedRow,selectedColumn]
