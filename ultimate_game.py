@@ -181,6 +181,7 @@ class Game():
                 if candidate != self.macroBoard[i][j]:
                     candidate = 0
             if candidate != 0:
+                print(candidate)
                 return candidate
 
         # Columns
@@ -190,6 +191,7 @@ class Game():
                 if candidate != self.macroBoard[j][i]:
                     candidate = 0
             if candidate != 0:
+                print(candidate)
                 return candidate
 
         # First diagonal
@@ -198,6 +200,7 @@ class Game():
             if candidate != self.macroBoard[i][i]:
                 candidate = 0
         if candidate != 0:
+            print(candidate)
             return candidate
 
         # Second diagonal
@@ -206,6 +209,7 @@ class Game():
             if candidate != self.macroBoard[i][len(self.macroBoard[i]) - i - 1]:
                 candidate = 0
         if candidate != 0:
+            print(candidate)
             return candidate
 
         return GAME_STATE_DRAW
@@ -279,7 +283,6 @@ class Game():
                 if self.convenient_indexer[i][j] == board_num:
                     if self.macroBoard[i][j] is not 0:
                         #   Player may choose any available board to play on if current is finished
-                        self.printBoard()
                         availableBoards = self.getAvailableMoves(10)
                         print(availableBoards)
                         for availableBoard in availableBoards:
@@ -314,7 +317,6 @@ class Game():
 
     def move(self, position, player, board_restriction):
         self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
-        self.printBoard()
         print("Successful Move")
         winner, done = self.check_current_state(board_restriction)
         if (done is "Done"):
@@ -496,7 +498,6 @@ class Game():
         done = "Not Done"
         winner = None
         while (done == "Not Done"):
-            print(board_num)
             board_num = self.confirmBoard(board_num)
             allAvailableMoves = self.getAvailableMoves(board_num)
             selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
@@ -509,8 +510,6 @@ class Game():
                 playerToMove = PLAYER_O_VAL
             else:
                 playerToMove = PLAYER_X_VAL
-            print(done)
-            print(board_num)
         # Get the history and build the training set
         for historyItem in self.macroBoardHistory:
             self.trainingHistory.append((self.getGameResult(), copy.deepcopy(historyItem)))
@@ -577,7 +576,6 @@ class Game():
             self.move(selectedMove, playerToMove, board_index)
             board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
             winner, state = self.check_current_state(10)
-            print(winner, state)
             if playerToMove == PLAYER_X_VAL:
                 playerToMove = PLAYER_O_VAL
             else:
@@ -663,6 +661,6 @@ if __name__ == "__main__":
     ticTacToeModel = TicTacToeModel(9, 3, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
     print("Simulating with Neural Network as X Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 2, ticTacToeModel)
+    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 10, ticTacToeModel)
     print("Simulating with Neural Network as O Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 2, ticTacToeModel)
+    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 10, ticTacToeModel)
