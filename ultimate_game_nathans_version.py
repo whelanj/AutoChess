@@ -609,6 +609,7 @@ class Game():
             else:
                 print("Puny human dares to play against the mighty AI!")
                 self.printBoard()
+                print('You must play on board {}'.format(board_index))
                 moveValidity = 'invalid'
                 while moveValidity == 'invalid':
                     selectedRow = int(input('Please choose a row (0 for top, 1 for middle and 2 for bottom): '))
