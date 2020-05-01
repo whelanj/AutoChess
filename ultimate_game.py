@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Apr 30 12:05:34 2020
-
 @author: jwhel
 """
 
@@ -24,11 +23,12 @@ GAME_STATE_DRAW = 0
 GAME_STATE_NOT_ENDED = 2
 
 
-class Game:
+class Game():
 
     def __init__(self):
         self.resetBoard()
         self.trainingHistory = []
+        self.convenient_indexer = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 
     def resetBoard(self):
         self.miniBoard1 = [
@@ -76,30 +76,97 @@ class Game:
             [0, 0, 0],
             [0, 0, 0]
         ]
-        self.fullBoard = [[self.miniBoard1,self.miniBoard2,self.miniBoard3],
-                          [self.miniBoard4,self.miniBoard5,self.miniBoard6],
-                          [self.miniBoard7,self.miniBoard8,self.miniBoard9],]
+        self.fullBoard = [self.miniBoard1, self.miniBoard2, self.miniBoard3,
+                          self.miniBoard4, self.miniBoard5, self.miniBoard6,
+                          self.miniBoard7, self.miniBoard8, self.miniBoard9]
         self.macroBoard = [
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]
         ]
         self.macroBoardHistory = []
-#havent upgraded this function
+
     def printBoard(self):
-        print(VERTICAL_SEPARATOR)
-        for i in range(len(self.macroBoard)):
-            print(' ', end='')
-            for j in range(len(self.macroBoard[i])):
-                if PLAYER_X_VAL == self.macroBoard[i][j]:
-                    print(PLAYER_X, end='')
-                elif PLAYER_O_VAL == self.macroBoard[i][j]:
-                    print(PLAYER_O, end='')
-                elif EMPTY_VAL == self.macroBoard[i][j]:
-                    print(EMPTY, end='')
-                print(HORIZONTAL_SEPARATOR, end='')
-            print(os.linesep)
-            print(VERTICAL_SEPARATOR)
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard1[0][0]) + ' || ' + str(self.miniBoard1[0][1]) + ' || ' + str(self.miniBoard1[0][2]) + ' |   | '
+              + str(self.miniBoard2[0][0]) + ' || ' + str(self.miniBoard2[0][1]) + ' || ' + str(self.miniBoard2[0][2]) + ' |   | '
+              + str(self.miniBoard3[0][0]) + ' || ' + str(self.miniBoard3[0][1]) + ' || ' + str(self.miniBoard3[0][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard1[1][0]) + ' || ' + str(self.miniBoard1[1][1]) + ' || ' + str(self.miniBoard1[1][2]) + ' |   | '
+              + str(self.miniBoard2[1][0]) + ' || ' + str(self.miniBoard2[1][1]) + ' || ' + str(self.miniBoard2[1][2]) + ' |   | '
+              + str(self.miniBoard3[1][0]) + ' || ' + str(self.miniBoard3[1][1]) + ' || ' + str(self.miniBoard3[1][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard1[0][0]) + ' || ' + str(self.miniBoard1[2][1]) + ' || ' + str(self.miniBoard1[2][2]) + ' |   | '
+              + str(self.miniBoard2[0][0]) + ' || ' + str(self.miniBoard2[2][1]) + ' || ' + str(self.miniBoard2[2][2]) + ' |   | '
+              + str(self.miniBoard3[0][0]) + ' || ' + str(self.miniBoard3[2][1]) + ' || ' + str(self.miniBoard3[2][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+        # Second row of boards
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard4[0][0]) + ' || ' + str(self.miniBoard4[0][1]) + ' || ' + str(self.miniBoard4[0][2]) + ' |   | '
+              + str(self.miniBoard5[0][0]) + ' || ' + str(self.miniBoard5[0][1]) + ' || ' + str(self.miniBoard5[0][2]) + ' |   | '
+              + str(self.miniBoard6[0][0]) + ' || ' + str(self.miniBoard6[0][1]) + ' || ' + str(self.miniBoard6[0][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard4[1][0]) + ' || ' + str(self.miniBoard4[1][1]) + ' || ' + str(self.miniBoard4[1][2]) + ' |   | '
+              + str(self.miniBoard5[1][0]) + ' || ' + str(self.miniBoard5[1][1]) + ' || ' + str(self.miniBoard5[1][2]) + ' |   | '
+              + str(self.miniBoard6[1][0]) + ' || ' + str(self.miniBoard6[1][1]) + ' || ' + str(self.miniBoard6[1][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard4[2][0]) + ' || ' + str(self.miniBoard4[2][1]) + ' || ' + str(self.miniBoard4[2][2]) + ' |   | '
+              + str(self.miniBoard5[2][0]) + ' || ' + str(self.miniBoard5[2][1]) + ' || ' + str(self.miniBoard5[2][2]) + ' |   | '
+              + str(self.miniBoard6[2][0]) + ' || ' + str(self.miniBoard6[2][1]) + ' || ' + str(self.miniBoard6[2][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+        # Third row of boards and overall board
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard7[0][0]) + ' || ' + str(self.miniBoard7[0][1]) + ' || ' + str(self.miniBoard7[0][2]) + ' |   | '
+              + str(self.miniBoard8[0][0]) + ' || ' + str(self.miniBoard8[0][1]) + ' || ' + str(self.miniBoard8[0][2]) + ' |   | '
+              + str(self.miniBoard9[0][0]) + ' || ' + str(self.miniBoard9[0][1]) + ' || ' + str(self.miniBoard9[0][2]) + ' |   | '
+              + str(self.macroBoard[0][0]) + ' || ' + str(self.macroBoard[0][1]) + ' || ' + str(self.macroBoard[0][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard7[1][0]) + ' || ' + str(self.miniBoard7[1][1]) + ' || ' + str(self.miniBoard7[1][2]) + ' |   | '
+              + str(self.miniBoard8[1][0]) + ' || ' + str(self.miniBoard8[1][1]) + ' || ' + str(self.miniBoard8[1][2]) + ' |   | '
+              + str(self.miniBoard9[1][0]) + ' || ' + str(self.miniBoard9[1][1]) + ' || ' + str(self.miniBoard9[1][2]) + ' |   | '
+              + str(self.macroBoard[1][0]) + ' || ' + str(self.macroBoard[1][1]) + ' || ' + str(self.macroBoard[1][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+        print('| ' + str(self.miniBoard7[2][0]) + ' || ' + str(self.miniBoard7[2][1]) + ' || ' + str(self.miniBoard7[2][2]) + ' |   | '
+              + str(self.miniBoard8[2][0]) + ' || ' + str(self.miniBoard8[2][1]) + ' || ' + str(self.miniBoard8[2][2]) + ' |   | '
+              + str(self.miniBoard9[2][0]) + ' || ' + str(self.miniBoard9[2][1]) + ' || ' + str(self.miniBoard9[2][2]) + ' |   | '
+              + str(self.macroBoard[2][0]) + ' || ' + str(self.macroBoard[2][1]) + ' || ' + str(self.macroBoard[2][2]) + ' |')
+        print('----------------  ----------------  ----------------')
+
+    def check_current_state(self, board_number):
+        # Check if draw
+        board = []
+        if board_number < 10:
+            board = self.fullBoard[board_number - 1]
+            print("Testing board: " + str(board_number))
+        elif board_number == 10:
+            print("Testing Macro Board")
+            board = self.macroBoard
+
+        # Check horizontals
+        if (board[0][0] == board[0][1] and board[0][1] == board[0][2] and board[0][0] is not 0):
+            return board[0][0], "Done"
+        if (board[1][0] == board[1][1] and board[1][1] == board[1][2] and board[1][0] is not 0):
+            return board[1][0], "Done"
+        if (board[2][0] == board[2][1] and board[2][1] == board[2][2] and board[2][0] is not 0):
+            return board[2][0], "Done"
+
+        # Check verticals
+        if (board[0][0] == board[1][0] and board[1][0] == board[2][0] and board[0][0] is not 0):
+            return board[0][0], "Done"
+        if (board[0][1] == board[1][1] and board[1][1] == board[2][1] and board[0][1] is not 0):
+            return board[0][1], "Done"
+        if (board[0][2] == board[1][2] and board[1][2] == board[2][2] and board[0][2] is not 0):
+            return board[0][2], "Done"
+
+        # Check diagonals
+        if (board[0][0] == board[1][1] and board[1][1] == board[2][2] and board[0][0] is not 0):
+            return board[1][1], "Done"
+        if (board[2][0] == board[1][1] and board[1][1] == board[0][2] and board[2][0] is not 0):
+            return board[1][1], "Done"
+        if len(self.getAvailableMoves(board_number)) == 0:
+            return None, "Draw"
+
+        return None, "Not Done"
 
     def getGameResult(self):
         for i in range(len(self.macroBoard)):
@@ -142,11 +209,11 @@ class Game:
             return candidate
 
         return GAME_STATE_DRAW
-
+    '''
     def getMiniGameResult(self, miniBoard):
-# =============================================================================
-#         checks results for a specified miniBoard
-# =============================================================================
+        # =============================================================================
+        #         checks results for a specified miniBoard
+        # =============================================================================
         for i in range(len(miniBoard)):
             for j in range(len(miniBoard[i])):
                 if miniBoard[i][j] == EMPTY_VAL:
@@ -187,56 +254,228 @@ class Game:
             return candidate
 
         return GAME_STATE_DRAW
-    
-    def getAvailableMoves(self):
-# =============================================================================
-#         only looks at the macro board
-# =============================================================================
+    '''
+
+    def getAvailableMoves(self, board_restriction):
+        # =============================================================================
+        #         looks at specific board
+        # =============================================================================
         availableMoves = []
-        for i in range(len(self.macroBoard)):
-            for j in range(len(self.macroBoard[i])):
-                if (self.macroBoard[i][j]) == EMPTY_VAL:
+        if board_restriction < 10:
+            board = self.fullBoard[board_restriction - 1]
+        elif board_restriction == 10:
+            board = self.macroBoard
+        for i in range(3):
+            for j in range(3):
+                if (board[i][j]) == EMPTY_VAL:
                     availableMoves.append([i, j])
+
         return availableMoves
+
+    def confirmBoard(self, board_num):
+        print("Testing Board " + str(board_num))
+        for i in range(3):
+            for j in range(3):
+                if self.convenient_indexer[i][j] == board_num:
+                    if self.macroBoard[i][j] is not 0:
+                        #   Player may choose any available board to play on if current is finished
+                        self.printBoard()
+                        availableBoards = self.getAvailableMoves(10)
+                        print(availableBoards)
+                        for availableBoard in availableBoards:
+                            # Potential function to determine optimal board, else just choose first available
+                            print("Board full, choosing Board: " + str(self.convenient_indexer[availableBoard[0]][availableBoard[1]]))
+                            return self.convenient_indexer[availableBoard[0]][availableBoard[1]]
+                    else:
+                        print(str(board_num) + " confirmed valid")
+                        return board_num
+
+    '''
     def getAllAvailableMoves(self):
-# =============================================================================
-#         looks for all available moves in the full board
-# =============================================================================
+        # =============================================================================
+        #         looks for all available moves in the full board
+        # =============================================================================
         allAvailableMoves = []
         for i in range(len(self.fullBoard)):
             for j in range(len(self.fullBoard[i])):
                 for k in range(len(self.fullBoard[j])):
-                    if (self.fullBoard[i][j][k]) == EMPTY_VAL:
-                        allAvailableMoves.append([i, j, k])
+                    for l in range(len(self.fullBoard[k])):
+                        if (self.fullBoard[i][j][k][l]) == EMPTY_VAL:
+                            allAvailableMoves.append([i, j, k, l])
         return allAvailableMoves
-#havent upgraded this function
+    '''
+    # havent upgraded this function
     def addToHistory(self, board):
         self.macroBoardHistory.append(board)
-#havent upgraded this function
+
+    # havent upgraded this function
     def printHistory(self):
         print(self.macroBoardHistory)
 
-    def move(self, position, player):
-        availableMoves = self.getAvailableMoves()
-        for i in range(len(availableMoves)):
-            if position[0] == availableMoves[i][0] and position[1] == availableMoves[i][1]:
-                self.macroBoard[position[0]][position[1]] = player
-                self.addToHistory(copy.deepcopy(self.macroBoard))
-    
-    def miniMove(self, position, player):
-# =============================================================================
-#         move function in the full board
-# =============================================================================
-        allAvailableMoves = self.getAllAvailableMoves()
-        for i in range(len(allAvailableMoves)):
-            if position[0] == allAvailableMoves[i][0] and position[1] == allAvailableMoves[i][1] and position[2] == allAvailableMoves[i][2]:
-                self.fullBoard[position[0]][position[1][position[2]] = player
-                self.addToHistory(copy.deepcopy(self.fullBoard))
+    def move(self, position, player, board_restriction):
+        self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
+        self.printBoard()
+        print("Successful Move")
+        winner, done = self.check_current_state(board_restriction)
+        if (done is "Done"):
+            print(str(winner) + " wins board: " + str(board_restriction))
+            self.printBoard()
+            for x in range(3):
+                for y in range(3):
+                    if self.convenient_indexer[x][y] == board_restriction:
+                        self.macroBoard[x][y] = player
+                        self.addToHistory(copy.deepcopy(self.macroBoard))
+        if (done is "Draw"):
+            print("Nobody wins board: " + str(board_restriction))
+            self.printBoard()
+            for x in range(3):
+                for y in range(3):
+                    if self.convenient_indexer[x][y] == board_restriction:
+                        self.macroBoard[x][y] = 2
+                        self.addToHistory(copy.deepcopy(self.macroBoard))
 
+
+
+    '''
+    def miniMove(self, position, player, restriction):
+        # =============================================================================
+        #         move function in the full board
+        #        restrictions come in the form of a list with two elements (0,0), which tells you
+        #        which mini board you can play on and are determined by opponents previous
+        #        play. Example opponent plays top left corner, restriction is (0,0) for
+        #        miniBoard1, or they play top right corner, restriction is (0,2) for
+        #        miniBoard3
+        #
+        #        this function records moves on the full board and the correct miniboard
+        #        it also checks to see if a move leads to a corresponding win of a miniboard
+        #        which is then recorded on the macroboard
+        # =============================================================================
+        allAvailableMoves = self.getAllAvailableMoves()
+        if restriction[0] == 0:
+            if restriction[1] == 0:
+                if self.getMiniGameResult(self.miniBoard1) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 1:
+                if self.getMiniGameResult(self.miniBoard2) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 2:
+                if self.getMiniGameResult(self.miniBoard3) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+        if restriction[0] == 1:
+            if restriction[1] == 0:
+                if self.getMiniGameResult(self.miniBoard4) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 1:
+                if self.getMiniGameResult(self.miniBoard5) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 2:
+                if self.getMiniGameResult(self.miniBoard6) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+        if restriction[0] == 2:
+            if restriction[1] == 0:
+                if self.getMiniGameResult(self.miniBoard7) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 1:
+                if self.getMiniGameResult(self.miniBoard8) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+            if restriction[1] == 2:
+                if self.getMiniGameResult(self.miniBoard9) != GAME_STATE_NOT_ENDED:
+                    restriction = None
+
+        for i in range(len(allAvailableMoves)):
+            if restriction != None:
+                if position[0] == allAvailableMoves[i][0] == restriction[0] and position[1] == allAvailableMoves[i][
+                    1] == restriction[1] and position[2] == allAvailableMoves[i][2] and position[3] == \
+                        allAvailableMoves[i][3]:
+                    self.fullBoard[position[0]][position[1]][position[2]][position[3]] = player
+                    if restriction[0] == 0:
+                        if restriction[1] == 0:
+                            self.miniBoard1[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard1) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard1)
+                        if restriction[1] == 1:
+                            self.miniBoard2[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard2) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard2)
+                        if restriction[1] == 2:
+                            self.miniBoard3[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard3) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard3)
+                    if restriction[0] == 1:
+                        if restriction[1] == 0:
+                            self.miniBoard4[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard4) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard4)
+                        if restriction[1] == 1:
+                            self.miniBoard5[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard5) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard5)
+                        if restriction[1] == 2:
+                            self.miniBoard6[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard6) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard6)
+                    if restriction[0] == 2:
+                        if restriction[1] == 0:
+                            self.miniBoard7[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard7) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard7)
+                        if restriction[1] == 1:
+                            self.miniBoard8[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard8) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard8)
+                        if restriction[1] == 2:
+                            self.miniBoard9[position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard9) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard9)
+            else:
+                if position[0] == allAvailableMoves[i][0] and position[1] == allAvailableMoves[i][1] and position[2] == \
+                        allAvailableMoves[i][2] and position[3] == allAvailableMoves[i][3]:
+                    self.fullBoard[position[0]][position[1]][position[2]][position[3]] = player
+                    if restriction[0] == 0:
+                        if restriction[1] == 0:
+                            self.miniBoard1[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard1) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard1)
+                        if restriction[1] == 1:
+                            self.miniBoard2[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard2) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard2)
+                        if restriction[1] == 2:
+                            self.miniBoard3[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard3) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard3)
+                    if restriction[0] == 1:
+                        if restriction[1] == 0:
+                            self.miniBoard4[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard4) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard4)
+                        if restriction[1] == 1:
+                            self.miniBoard5[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard5) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard5)
+                        if restriction[1] == 2:
+                            self.miniBoard6[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard6) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard6)
+                    if restriction[0] == 2:
+                        if restriction[1] == 0:
+                            self.miniBoard7[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard7) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard7)
+                        if restriction[1] == 1:
+                            self.miniBoard8[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard8) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard8)
+                        if restriction[1] == 2:
+                            self.miniBoard9[position[0]][position[1]][position[2]][position[3]] = player
+                            if self.getMiniGameState(self.miniBoard9) in [GAME_STATE_X, GAME_STATE_O, GAME_STATE_DRAW]:
+                                self.macroBoard[position[0]][position[1]] = self.miniGameState(self.miniBoard9)
+                self.addToHistory(copy.deepcopy(self.fullBoard))
+    '''
     def simulate(self, playerToMove):
-# =============================================================================
-#         simulates game with players moving randomly, using macro board
-# =============================================================================
+        # =============================================================================
+        #         simulates game with players moving randomly, using macro board
+        # =============================================================================
         while (self.getGameResult() == GAME_STATE_NOT_ENDED):
             availableMoves = self.getAvailableMoves()
             selectedMove = availableMoves[random.randrange(0, len(availableMoves))]
@@ -248,27 +487,38 @@ class Game:
         # Get the history and build the training set
         for historyItem in self.macroBoardHistory:
             self.trainingHistory.append((self.getGameResult(), copy.deepcopy(historyItem)))
-    
+
     def fullSimulate(self, playerToMove):
-# =============================================================================
-#         simulates game with players moving randomly, using full ultimate board
-# =============================================================================
-        while (self.getGameResult() == GAME_STATE_NOT_ENDED):
-            allAvailableMoves = self.getAllAvailableMoves()
+        # =============================================================================
+        #         simulates game with players moving randomly, using full ultimate board
+        # =============================================================================
+        board_num = 1
+        done = "Not Done"
+        winner = None
+        while (done == "Not Done"):
+            print(board_num)
+            board_num = self.confirmBoard(board_num)
+            allAvailableMoves = self.getAvailableMoves(board_num)
             selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
-            self.move(selectedMove, playerToMove)
+            print("Playing " + str(selectedMove) + " on board " + str(board_num))
+            self.move(selectedMove, playerToMove, board_num)
+            board_num = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
+            print("Next board will be " + str(board_num))
+            winner, done = self.check_current_state(10)
             if playerToMove == PLAYER_X_VAL:
                 playerToMove = PLAYER_O_VAL
             else:
                 playerToMove = PLAYER_X_VAL
+            print(done)
+            print(board_num)
         # Get the history and build the training set
         for historyItem in self.macroBoardHistory:
             self.trainingHistory.append((self.getGameResult(), copy.deepcopy(historyItem)))
 
     def simulateNeuralNetwork(self, nnPlayer, model):
-# =============================================================================
-#         simulates game with players moving randomly, using macro board
-# =============================================================================
+        # =============================================================================
+        #         simulates game with players moving randomly, using macro board
+        # =============================================================================
         playerToMove = PLAYER_X_VAL
         while (self.getGameResult() == GAME_STATE_NOT_ENDED):
             availableMoves = self.getAvailableMoves()
@@ -294,20 +544,24 @@ class Game:
                 playerToMove = PLAYER_O_VAL
             else:
                 playerToMove = PLAYER_X_VAL
+
     def fullSimulateNeuralNetwork(self, nnPlayer, model):
-# =============================================================================
-#         simulates game with players moving from learning experience, using full ultimate board
-# =============================================================================
+        # =============================================================================
+        #         simulates game with players moving from learning experience, using full ultimate board
+        # =============================================================================
         playerToMove = PLAYER_X_VAL
-        while (self.getGameResult() == GAME_STATE_NOT_ENDED):
-            allAvailableMoves = self.getAllAvailableMoves()
+        state = "Not Done"
+        board_index = 1
+        while (state == "Not Done"):
+            board_index = self.confirmBoard(board_index)
+            allAvailableMoves = self.getAvailableMoves(board_index)
             if playerToMove == nnPlayer:
                 maxValue = 0
                 bestMove = allAvailableMoves[0]
                 for availableMove in allAvailableMoves:
                     # get a copy of a board
                     boardCopy = copy.deepcopy(self.fullBoard)
-                    boardCopy[availableMove[0]][availableMove[1]][availableMove[2]] = nnPlayer
+                    boardCopy[board_index-1][availableMove[0]][availableMove[1]] = nnPlayer
                     if nnPlayer == PLAYER_X_VAL:
                         value = model.predict(boardCopy, 0)
                     else:
@@ -316,21 +570,27 @@ class Game:
                         maxValue = value
                         bestMove = availableMove
                 selectedMove = bestMove
+                print("NN playing best move")
             else:
-                selectedMove = allAvailableMoves[random.randrange(0, len(availableMoves))]
-            self.move(selectedMove, playerToMove)
+                print("Opponent playing random move")
+                selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+            self.move(selectedMove, playerToMove, board_index)
+            board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
+            winner, state = self.check_current_state(10)
+            print(winner, state)
             if playerToMove == PLAYER_X_VAL:
                 playerToMove = PLAYER_O_VAL
             else:
                 playerToMove = PLAYER_X_VAL
-#    skipped this function
+
+    #    skipped this function
     def getTrainingHistory(self):
         return self.trainingHistory
 
     def simulateManyGames(self, playerToMove, numberOfGames):
-# =============================================================================
-#         simulates many games with only random players and just macro board
-# =============================================================================
+        # =============================================================================
+        #         simulates many games with only random players and just macro board
+        # =============================================================================
         playerXWins = 0
         playerOWins = 0
         draws = 0
@@ -341,15 +601,17 @@ class Game:
                 playerXWins = playerXWins + 1
             elif self.getGameResult() == PLAYER_O_VAL:
                 playerOWins = playerOWins + 1
-            else: draws = draws + 1
+            else:
+                draws = draws + 1
         totalWins = playerXWins + playerOWins + draws
-        print ('X Wins: ' + str(int(playerXWins * 100/totalWins)) + '%')
+        print('X Wins: ' + str(int(playerXWins * 100 / totalWins)) + '%')
         print('O Wins: ' + str(int(playerOWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
+
     def fullSimulateManyGames(self, playerToMove, numberOfGames):
-# =============================================================================
-#         simulates many games with only random players and the full board
-# =============================================================================
+        # =============================================================================
+        #         simulates many games with only random players and the full board
+        # =============================================================================
         playerXWins = 0
         playerOWins = 0
         draws = 0
@@ -360,62 +622,47 @@ class Game:
                 playerXWins = playerXWins + 1
             elif self.getGameResult() == PLAYER_O_VAL:
                 playerOWins = playerOWins + 1
-            else: draws = draws + 1
+            else:
+                draws = draws + 1
         totalWins = playerXWins + playerOWins + draws
-        print ('X Wins: ' + str(int(playerXWins * 100/totalWins)) + '%')
+        print('X Wins: ' + str(int(playerXWins * 100 / totalWins)) + '%')
         print('O Wins: ' + str(int(playerOWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
+        print("Full sim complete")
 
 
     def simulateManyNeuralNetworkGames(self, nnPlayer, numberOfGames, model):
-# =============================================================================
-#         simulates many games with only random players and just the macro board
-# =============================================================================
+        # =============================================================================
+        #         simulates many games with only random players and the full board
+        # =============================================================================
         nnPlayerWins = 0
         randomPlayerWins = 0
         draws = 0
-        print ("NN player")
-        print (nnPlayer)
-        for i in range(numberOfGames):
-            self.resetBoard()
-            self.simulateNeuralNetwork(nnPlayer, model)
-            if self.getGameResult() == nnPlayer:
-                nnPlayerWins = nnPlayerWins + 1
-            elif self.getGameResult() == GAME_STATE_DRAW:
-                draws = draws + 1
-            else: randomPlayerWins = randomPlayerWins + 1
-        totalWins = nnPlayerWins + randomPlayerWins + draws
-        print ('X Wins: ' + str(int(nnPlayerWins * 100/totalWins)) + '%')
-        print('O Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
-        print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
-    def simulateManyNeuralNetworkGames(self, nnPlayer, numberOfGames, model):
-# =============================================================================
-#         simulates many games with only random players and the full board
-# =============================================================================
-        nnPlayerWins = 0
-        randomPlayerWins = 0
-        draws = 0
-        print ("NN player")
-        print (nnPlayer)
+        print("NN player")
+        print(nnPlayer)
         for i in range(numberOfGames):
             self.resetBoard()
             self.fullSimulateNeuralNetwork(nnPlayer, model)
+            self.printBoard()
             if self.getGameResult() == nnPlayer:
                 nnPlayerWins = nnPlayerWins + 1
             elif self.getGameResult() == GAME_STATE_DRAW:
                 draws = draws + 1
-            else: randomPlayerWins = randomPlayerWins + 1
+            else:
+                randomPlayerWins = randomPlayerWins + 1
         totalWins = nnPlayerWins + randomPlayerWins + draws
-        print ('X Wins: ' + str(int(nnPlayerWins * 100/totalWins)) + '%')
+        print('X Wins: ' + str(int(nnPlayerWins * 100 / totalWins)) + '%')
         print('O Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
+        print("NN Sim complete")
+
 
 if __name__ == "__main__":
     game = Game()
-    game.fullSimulateManyGames(1, 10000)
+    game.fullSimulateManyGames(1, 10)
     ticTacToeModel = TicTacToeModel(9, 3, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
-    print ("Simulating with Neural Network as X Player:")
-    game.fullSimulateManyNeuralNetworkGames(PLAYER_X_VAL, 10000, ticTacToeModel)
+    print("Simulating with Neural Network as X Player:")
+    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 2, ticTacToeModel)
     print("Simulating with Neural Network as O Player:")
-    game.fullSimulateManyNeuralNetworkGames(PLAYER_O_VAL, 10000, ticTacToeModel)
+    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 2, ticTacToeModel)
