@@ -580,7 +580,13 @@ class Game():
         # =============================================================================
         playerToMove = PLAYER_X_VAL
         state = "Not Done"
-        board_index = 1
+        board_choice = 'invalid'
+        while board_choice == 'invalid':
+            board_index = int(input('Choose a board index 1-9: '))
+            if board_index in [1,2,3,4,5,6,7,8,9]:
+                board_choice = 'valid'
+            else:
+                board_index = int(input('Please a valid board index 1-9: '))
         while (state == "Not Done"):
             board_index = self.confirmBoard(board_index)
             allAvailableMoves = self.getAvailableMoves(board_index)
@@ -602,10 +608,11 @@ class Game():
                 print("NN playing best move")
             else:
                 print("Puny human dares to play against the mighty AI!")
+                self.printBoard()
                 moveValidity = 'invalid'
                 while moveValidity == 'invalid':
-                    selectedRow = int(input('Please choose a row: 0 for top, 1 for middle and 2 for bottom'))
-                    selectedColumn = int(input('Please choose a column: 0 for left, 1 for middle and 2 for right'))
+                    selectedRow = int(input('Please choose a row (0 for top, 1 for middle and 2 for bottom): '))
+                    selectedColumn = int(input('Please choose a column (0 for left, 1 for middle and 2 for right): '))
                     selectedMove = [selectedRow,selectedColumn]
                     if selectedMove in allAvailableMoves:
                         moveValidity = 'valid'
