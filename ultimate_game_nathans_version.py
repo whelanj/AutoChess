@@ -714,7 +714,7 @@ class Game():
             person = input('Do you want to play again?: say "No" if not')
         totalWins = nnPlayerWins + humanPlayerWins + draws
         print('X Wins: ' + str(int(nnPlayerWins * 100 / totalWins)) + '%')
-        print('O Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
+        print('O Wins: ' + str(int(humanPlayerWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
         print("This duel of Man vs. Machine has ended.")
 
@@ -728,4 +728,4 @@ if __name__ == "__main__":
     game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 10, ticTacToeModel)
     print("Simulating with Neural Network as O Player:")
     game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 10, ticTacToeModel)
-    game.simulatePvCgame(PLAYER_0_VAL, ticTacToeModel)
+    game.simulatePvCgame(PLAYER_O_VAL, ticTacToeModel)
