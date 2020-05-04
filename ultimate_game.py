@@ -222,7 +222,6 @@ class Game():
             for j in range(len(miniBoard[i])):
                 if miniBoard[i][j] == EMPTY_VAL:
                     return GAME_STATE_NOT_ENDED
-
         # Rows
         for i in range(len(miniBoard)):
             candidate = miniBoard[i][0]
@@ -231,7 +230,6 @@ class Game():
                     candidate = 0
             if candidate != 0:
                 return candidate
-
         # Columns
         for i in range(len(miniBoard)):
             candidate = miniBoard[0][i]
@@ -240,7 +238,6 @@ class Game():
                     candidate = 0
             if candidate != 0:
                 return candidate
-
         # First diagonal
         candidate = miniBoard[0][0]
         for i in range(len(miniBoard)):
@@ -248,7 +245,6 @@ class Game():
                 candidate = 0
         if candidate != 0:
             return candidate
-
         # Second diagonal
         candidate = miniBoard[0][2]
         for i in range(len(miniBoard)):
@@ -256,7 +252,6 @@ class Game():
                 candidate = 0
         if candidate != 0:
             return candidate
-
         return GAME_STATE_DRAW
     '''
 
@@ -383,7 +378,6 @@ class Game():
             if restriction[1] == 2:
                 if self.getMiniGameResult(self.miniBoard9) != GAME_STATE_NOT_ENDED:
                     restriction = None
-
         for i in range(len(allAvailableMoves)):
             if restriction != None:
                 if position[0] == allAvailableMoves[i][0] == restriction[0] and position[1] == allAvailableMoves[i][
@@ -712,8 +706,7 @@ class Game():
         nnPlayerWins = 0
         randomPlayerWins = 0
         draws = 0
-        print("NN player")
-        print(nnPlayer)
+        print("NN player value: {}".format(nnPlayer))
         for i in range(numberOfGames):
             self.resetBoard()
             self.fullSimulateNeuralNetwork(nnPlayer, model)
@@ -725,6 +718,7 @@ class Game():
             else:
                 randomPlayerWins = randomPlayerWins + 1
         totalWins = nnPlayerWins + randomPlayerWins + draws
+        print("NN player value: {}".format(nnPlayer))
         print('X Wins: ' + str(int(nnPlayerWins * 100 / totalWins)) + '%')
         print('O Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
@@ -737,8 +731,9 @@ class Game():
         nnPlayerWins = 0
         humanPlayerWins = 0
         draws = 0
-        print("NN player")
-        print(nnPlayer)
+        print('----------------------------------------------------------------------------')
+        print("NN player value: {}".format(nnPlayer))
+
         person = input('Do you want to play? ')
         while person != 'No':
             self.resetBoard()
