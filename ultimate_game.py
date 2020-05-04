@@ -85,6 +85,7 @@ class Game():
             [0, 0, 0]
         ]
         self.macroBoardHistory = []
+        self.fullBoardHistory = []
 
     def printBoard(self):
         print('----------------  ----------------  ----------------')
@@ -303,12 +304,12 @@ class Game():
         return allAvailableMoves
     '''
     # havent upgraded this function
-    def addToHistory(self, board):
-        self.macroBoardHistory.append(board)
+    def addToHistory(self, fullBoard):
+        self.fullBoardHistory.append(fullBoard)
 
     # havent upgraded this function
     def printHistory(self):
-        print(self.macroBoardHistory)
+        print(self.fullBoardHistory)
 
     def move(self, position, player, board_restriction):
         self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
@@ -505,7 +506,7 @@ class Game():
             else:
                 playerToMove = PLAYER_X_VAL
         # Get the history and build the training set
-        for historyItem in self.macroBoardHistory:
+        for historyItem in self.fullBoardHistory:
             self.trainingHistory.append((self.getGameResult(), copy.deepcopy(historyItem)))
 
     def simulateNeuralNetwork(self, nnPlayer, model):
