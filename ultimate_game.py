@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Apr 30 12:05:34 2020
-@author: jwhel
+@author: nleach
 """
 
 import os
@@ -137,9 +137,7 @@ class Game():
         board = []
         if board_number < 10:
             board = self.fullBoard[board_number - 1]
-            print("Testing board: " + str(board_number))
         elif board_number == 10:
-            print("Testing Macro Board")
             board = self.macroBoard
 
         # Check horizontals
@@ -181,7 +179,6 @@ class Game():
                 if candidate != self.macroBoard[i][j]:
                     candidate = 0
             if candidate != 0:
-                print(candidate)
                 return candidate
 
         # Columns
@@ -191,7 +188,6 @@ class Game():
                 if candidate != self.macroBoard[j][i]:
                     candidate = 0
             if candidate != 0:
-                print(candidate)
                 return candidate
 
         # First diagonal
@@ -200,7 +196,6 @@ class Game():
             if candidate != self.macroBoard[i][i]:
                 candidate = 0
         if candidate != 0:
-            print(candidate)
             return candidate
 
         # Second diagonal
@@ -209,7 +204,6 @@ class Game():
             if candidate != self.macroBoard[i][len(self.macroBoard[i]) - i - 1]:
                 candidate = 0
         if candidate != 0:
-            print(candidate)
             return candidate
 
         return GAME_STATE_DRAW
@@ -277,20 +271,17 @@ class Game():
         return availableMoves
 
     def confirmBoard(self, board_num):
-        print("Testing Board " + str(board_num))
         for i in range(3):
             for j in range(3):
                 if self.convenient_indexer[i][j] == board_num:
                     if self.macroBoard[i][j] is not 0:
                         #   Player may choose any available board to play on if current is finished
                         availableBoards = self.getAvailableMoves(10)
-                        print(availableBoards)
-                        for availableBoard in availableBoards:
-                            # Potential function to determine optimal board, else just choose first available
-                            print("Board full, choosing Board: " + str(self.convenient_indexer[availableBoard[0]][availableBoard[1]]))
-                            return self.convenient_indexer[availableBoard[0]][availableBoard[1]]
+                        choice = random.randint(0, availableBoards.__len__() - 1)
+                        # for availableBoard in availableBoards:
+                        # Potential function to determine optimal board, else just choose first available
+                        return self.convenient_indexer[availableBoards[choice][0]][availableBoards[choice][1]]
                     else:
-                        print(str(board_num) + " confirmed valid")
                         return board_num
 
     '''
@@ -317,19 +308,14 @@ class Game():
 
     def move(self, position, player, board_restriction):
         self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
-        print("Successful Move")
         winner, done = self.check_current_state(board_restriction)
-        if (done is "Done"):
-            print(str(winner) + " wins board: " + str(board_restriction))
-            self.printBoard()
+        if (done == "Done"):
             for x in range(3):
                 for y in range(3):
                     if self.convenient_indexer[x][y] == board_restriction:
                         self.macroBoard[x][y] = player
                         self.addToHistory(copy.deepcopy(self.macroBoard))
-        if (done is "Draw"):
-            print("Nobody wins board: " + str(board_restriction))
-            self.printBoard()
+        if (done == "Draw"):
             for x in range(3):
                 for y in range(3):
                     if self.convenient_indexer[x][y] == board_restriction:
@@ -501,10 +487,8 @@ class Game():
             board_num = self.confirmBoard(board_num)
             allAvailableMoves = self.getAvailableMoves(board_num)
             selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
-            print("Playing " + str(selectedMove) + " on board " + str(board_num))
             self.move(selectedMove, playerToMove, board_num)
             board_num = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
-            print("Next board will be " + str(board_num))
             winner, done = self.check_current_state(10)
             if playerToMove == PLAYER_X_VAL:
                 playerToMove = PLAYER_O_VAL
@@ -513,36 +497,6 @@ class Game():
         # Get the history and build the training set
         for historyItem in self.macroBoardHistory:
             self.trainingHistory.append((self.getGameResult(), copy.deepcopy(historyItem)))
-
-    def simulateNeuralNetwork(self, nnPlayer, model):
-        # =============================================================================
-        #         simulates game with players moving randomly, using macro board
-        # =============================================================================
-        playerToMove = PLAYER_X_VAL
-        while (self.getGameResult() == GAME_STATE_NOT_ENDED):
-            availableMoves = self.getAvailableMoves()
-            if playerToMove == nnPlayer:
-                maxValue = 0
-                bestMove = availableMoves[0]
-                for availableMove in availableMoves:
-                    # get a copy of a board
-                    boardCopy = copy.deepcopy(self.macroBoard)
-                    boardCopy[availableMove[0]][availableMove[1]] = nnPlayer
-                    if nnPlayer == PLAYER_X_VAL:
-                        value = model.predict(boardCopy, 0)
-                    else:
-                        value = model.predict(boardCopy, 2)
-                    if value > maxValue:
-                        maxValue = value
-                        bestMove = availableMove
-                selectedMove = bestMove
-            else:
-                selectedMove = availableMoves[random.randrange(0, len(availableMoves))]
-            self.move(selectedMove, playerToMove)
-            if playerToMove == PLAYER_X_VAL:
-                playerToMove = PLAYER_O_VAL
-            else:
-                playerToMove = PLAYER_X_VAL
 
     def fullSimulateNeuralNetwork(self, nnPlayer, model):
         # =============================================================================
@@ -569,9 +523,7 @@ class Game():
                         maxValue = value
                         bestMove = availableMove
                 selectedMove = bestMove
-                print("NN playing best move")
             else:
-                print("Opponent playing random move")
                 selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
             self.move(selectedMove, playerToMove, board_index)
             board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
@@ -641,16 +593,18 @@ class Game():
         for i in range(numberOfGames):
             self.resetBoard()
             self.fullSimulateNeuralNetwork(nnPlayer, model)
-            self.printBoard()
-            if self.getGameResult() == nnPlayer:
+            winner, done = self.check_current_state(10)
+            if winner == nnPlayer:
                 nnPlayerWins = nnPlayerWins + 1
-            elif self.getGameResult() == GAME_STATE_DRAW:
+            elif done == "Draw":
                 draws = draws + 1
             else:
                 randomPlayerWins = randomPlayerWins + 1
         totalWins = nnPlayerWins + randomPlayerWins + draws
-        print('X Wins: ' + str(int(nnPlayerWins * 100 / totalWins)) + '%')
-        print('O Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
+        print(nnPlayerWins)
+        print(randomPlayerWins)
+        print('NN Wins: ' + str(int(nnPlayerWins * 100 / totalWins)) + '%')
+        print('Random Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
         print("NN Sim complete")
 
@@ -661,6 +615,6 @@ if __name__ == "__main__":
     ticTacToeModel = TicTacToeModel(9, 3, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
     print("Simulating with Neural Network as X Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 10, ticTacToeModel)
+    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 100, ticTacToeModel)
     print("Simulating with Neural Network as O Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 10, ticTacToeModel)
+    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 100, ticTacToeModel)
