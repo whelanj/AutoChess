@@ -85,7 +85,6 @@ class Game():
             [0, 0, 0]
         ]
         self.macroBoardHistory = []
-        self.fullBoardHistory = []
 
     def printBoard(self):
         print('----------------  ----------------  ----------------')
@@ -300,12 +299,12 @@ class Game():
         return allAvailableMoves
     '''
     # havent upgraded this function
-    def addToHistory(self, fullBoard):
-        self.fullBoardHistory.append(fullBoard)
+    def addToHistory(self, board):
+        self.macroBoardHistory.append(board)
 
     # havent upgraded this function
     def printHistory(self):
-        print(self.fullBoardHistory)
+        print(self.macroBoardHistory)
 
     def move(self, position, player, board_restriction):
         self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
@@ -496,7 +495,7 @@ class Game():
             else:
                 playerToMove = PLAYER_X_VAL
         # Get the history and build the training set
-        for historyItem in self.fullBoardHistory:
+        for historyItem in self.macroBoardHistory:
             self.trainingHistory.append((self.getGameResult(), copy.deepcopy(historyItem)))
 
     def fullSimulateNeuralNetwork(self, nnPlayer, model):
@@ -533,88 +532,7 @@ class Game():
                 playerToMove = PLAYER_O_VAL
             else:
                 playerToMove = PLAYER_X_VAL
-    def getRowAndColumn(self, block_number):
-        block_choice = 'invalid'
-        while block_choice == 'invalid':
-            if block_number in [1,2,3,4,5,6,7,8,9]:
-                block_choice = 'valid'
-            else:
-                block_number = int(input('Choice was invalid--Please choose a number between 1 and 9: '))
-        if str(block_number) in '123':
-            row = 0
-        elif str(block_number) in '456':
-            row = 1
-        elif str(block_number) in '789':
-            row = 2
-        else: 
-            block_number = int(input('Choice was invalid--Please choose a number between 1 and 9: '))
-            
-        if str(block_number) in '147':
-            column = 0
-        elif str(block_number) in '258':
-            column = 1
-        elif str(block_number) in '369':
-            column = 2
-        return row,column
-    def chooseBoard(self):
-        board_choice = 'invalid'
-        while board_choice == 'invalid':
-            board_index = int(input('Choose a board index 1-9: '))
-            if board_index in [1,2,3,4,5,6,7,8,9]:
-                board_choice = 'valid'
-            else:
-                board_index = int(input('Please a valid board index 1-9: '))
-        return board_index
-    def personVsAIgame(self, nnPlayer, model):
-        # =============================================================================
-        #         real human can play a game against the AI, using full ultimate board
-        # =============================================================================
-        playerToMove = PLAYER_X_VAL
-        state = "Not Done"
-        board_index = self.chooseBoard()
-        while (state == "Not Done"):
-            board_index = self.confirmBoard(board_index)
-            allAvailableMoves = self.getAvailableMoves(board_index)
-            if playerToMove == nnPlayer:
-                maxValue = 0
-                bestMove = allAvailableMoves[0]
-                for availableMove in allAvailableMoves:
-                    # get a copy of a board
-                    boardCopy = copy.deepcopy(self.fullBoard)
-                    boardCopy[board_index-1][availableMove[0]][availableMove[1]] = nnPlayer
-                    if nnPlayer == PLAYER_X_VAL:
-                        value = model.predict(boardCopy, 0)
-                    else:
-                        value = model.predict(boardCopy, 2)
-                    if value > maxValue:
-                        maxValue = value
-                        bestMove = availableMove
-                selectedMove = bestMove
-                self.printBoard()
-                print("NN playing best move: {}".format(selectedMove))
-            else:
-                print("Puny human dares to play against the mighty AI!")
-#                self.printBoard()
-                print('You must play on board {}'.format(board_index))
-                moveValidity = 'invalid'
-                while moveValidity == 'invalid':
-                    selectedRow, selectedColumn = self.getRowAndColumn(int(input('Please choose an empty block to play in: ')))
-                    selectedMove = [selectedRow,selectedColumn]
-                    if selectedMove in allAvailableMoves:
-                        moveValidity = 'valid'
-                    else:
-                        print('Your move choice was invalid, please choose again.')
-                print("Human playing move: {}".format(selectedMove))
-            self.printBoard()
-            self.move(selectedMove, playerToMove, board_index)
-            self.printBoard()
-            board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
-            winner, state = self.check_current_state(10)
-            if playerToMove == PLAYER_X_VAL:
-                playerToMove = PLAYER_O_VAL
-            else:
-                playerToMove = PLAYER_X_VAL
-                
+
     #    skipped this function
     def getTrainingHistory(self):
         return self.trainingHistory
@@ -690,48 +608,13 @@ class Game():
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
         print("NN Sim complete")
 
-    def simulatePvCgame(self, nnPlayer, model):
-        # =============================================================================
-        #         simulates a game between person and computer
-        # =============================================================================
-        nnPlayerWins = 0
-        humanPlayerWins = 0
-        draws = 0
-        print('----------------------------------------------------------------------------')
-        print("NN player value: {}".format(nnPlayer))
-
-        person = input('Do you want to play? ')
-        while person != 'No':
-            self.resetBoard()
-            self.personVsAIgame(nnPlayer, model)
-            self.printBoard()
-            if self.getGameResult() == nnPlayer:
-                nnPlayerWins = nnPlayerWins + 1
-            elif self.getGameResult() == GAME_STATE_DRAW:
-                draws = draws + 1
-            else:
-                humanPlayerWins = humanPlayerWins + 1
-            person = input('Do you want to play again?: say "No" if not ')
-        totalWins = nnPlayerWins + humanPlayerWins + draws
-        if nnPlayer == PLAYER_X_VAL:
-            xPlayerWins = nnPlayerWins
-            oPlayerWins = humanPlayerWins
-        else:
-            xPlayerWins = humanPlayerWins
-            oPlayerWins = nnPlayerWins
-        print("NN player value: {}".format(nnPlayer))
-        print('X Wins: ' + str(int(xPlayerWins * 100 / totalWins)) + '%')
-        print('O Wins: ' + str(int(oPlayerWins * 100 / totalWins)) + '%')
-        print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
-        print("This duel of Man vs. Machine has ended.")
 
 if __name__ == "__main__":
     game = Game()
-    game.fullSimulateManyGames(1, 10)
+    game.fullSimulateManyGames(1, 100)
     ticTacToeModel = TicTacToeModel(9, 3, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
     print("Simulating with Neural Network as X Player:")
     game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 100, ticTacToeModel)
     print("Simulating with Neural Network as O Player:")
     game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 100, ticTacToeModel)
-    game.simulatePvCgame(PLAYER_O_VAL, ticTacToeModel)
