@@ -713,14 +713,22 @@ class Game():
             self.printBoard()
             if self.getGameResult() == nnPlayer:
                 nnPlayerWins = nnPlayerWins + 1
+                print("NN player has won the playing as {}".format(nnPlayer))
             elif self.getGameResult() == GAME_STATE_DRAW:
                 draws = draws + 1
             else:
                 randomPlayerWins = randomPlayerWins + 1
+                print("NN player has lost the playing as {}".format(nnPlayer))
         totalWins = nnPlayerWins + randomPlayerWins + draws
+        if nnPlayer == PLAYER_X_VAL:
+            xPlayerWins = nnPlayerWins
+            oPlayerWins = randomPlayerWins
+        else:
+            xPlayerWins = randomPlayerWins
+            oPlayerWins = nnPlayerWins
         print("NN player value: {}".format(nnPlayer))
-        print('X Wins: ' + str(int(nnPlayerWins * 100 / totalWins)) + '%')
-        print('O Wins: ' + str(int(randomPlayerWins * 100 / totalWins)) + '%')
+        print('X Wins: ' + str(int(xPlayerWins * 100 / totalWins)) + '%')
+        print('O Wins: ' + str(int(oPlayerWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
         print("NN Sim complete")
         
@@ -747,8 +755,15 @@ class Game():
                 humanPlayerWins = humanPlayerWins + 1
             person = input('Do you want to play again?: say "No" if not ')
         totalWins = nnPlayerWins + humanPlayerWins + draws
-        print('X Wins: ' + str(int(nnPlayerWins * 100 / totalWins)) + '%')
-        print('O Wins: ' + str(int(humanPlayerWins * 100 / totalWins)) + '%')
+        if nnPlayer == PLAYER_X_VAL:
+            xPlayerWins = nnPlayerWins
+            oPlayerWins = humanPlayerWins
+        else:
+            xPlayerWins = humanPlayerWins
+            oPlayerWins = nnPlayerWins
+        print("NN player value: {}".format(nnPlayer))
+        print('X Wins: ' + str(int(xPlayerWins * 100 / totalWins)) + '%')
+        print('O Wins: ' + str(int(oPlayerWins * 100 / totalWins)) + '%')
         print('Draws: ' + str(int(draws * 100 / totalWins)) + '%')
         print("This duel of Man vs. Machine has ended.")
 
