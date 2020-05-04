@@ -315,13 +315,13 @@ class Game():
                 for y in range(3):
                     if self.convenient_indexer[x][y] == board_restriction:
                         self.macroBoard[x][y] = player
-                        self.addToHistory(copy.deepcopy(self.macroBoard))
+                        self.addToHistory(copy.deepcopy(self.fullBoard))
         if (done == "Draw"):
             for x in range(3):
                 for y in range(3):
                     if self.convenient_indexer[x][y] == board_restriction:
                         self.macroBoard[x][y] = 2
-                        self.addToHistory(copy.deepcopy(self.macroBoard))
+                        self.addToHistory(copy.deepcopy(self.fullBoard))
 
 
 
