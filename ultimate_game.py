@@ -612,7 +612,7 @@ class Game():
         # =============================================================================
         playerToMove = PLAYER_X_VAL
         state = "Not Done"
-        self.chooseBoard()
+        board_index = self.chooseBoard()
         while (state == "Not Done"):
             board_index = self.confirmBoard(board_index)
             allAvailableMoves = self.getAvailableMoves(board_index)
@@ -773,7 +773,7 @@ if __name__ == "__main__":
     ticTacToeModel = TicTacToeModel(9, 3, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
     print("Simulating with Neural Network as X Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 10, ticTacToeModel)
-    print("Simulating with Neural Network as O Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 10, ticTacToeModel)
+    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 1000, ticTacToeModel)
+#    print("Simulating with Neural Network as O Player:")
+#    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 10, ticTacToeModel)
     game.simulatePvCgame(PLAYER_O_VAL, ticTacToeModel)
