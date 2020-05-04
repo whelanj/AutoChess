@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Apr 19 20:07:12 2020
-
 @author: jwhel
 """
 
@@ -35,7 +34,7 @@ class TicTacToeModel:
             output.append(data[0])
 
         X = np.array(input).reshape((-1, self.numberOfInputs))
-        y = to_categorical(output, num_classes=3)
+        y = to_categorical(output, num_classes=9)
         # Train and test data split
         boundary = int(0.8 * len(X))
         X_train = X[:boundary]
