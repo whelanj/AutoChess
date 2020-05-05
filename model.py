@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Apr 19 20:07:12 2020
-@author: jwhel
-"""
-
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.models import Sequential
@@ -19,12 +13,16 @@ class TicTacToeModel:
         self.numberOfInputs = numberOfInputs
         self.numberOfOutputs = numberOfOutputs
         self.model = Sequential()
-        self.model.add(Dense(64, activation='relu', input_shape=(numberOfInputs, )))
-        self.model.add(Dense(128, activation='relu'))
-        self.model.add(Dense(128, activation='relu'))
-        self.model.add(Dense(128, activation='relu'))
-        self.model.add(Dense(numberOfOutputs, activation='softmax'))
-        self.model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+        self.model.add(Dense(81, input_dim=81, activation='relu'))
+        self.model.add(Dense(81, activation='relu'))
+        #self.model.add(Dropout(.50))
+        #self.model.add(Dense(81, activation='relu'))
+        #self.model.add(Dropout(.50))
+        #self.model.add(Dense(128, activation='relu'))
+        #self.model.add(Dropout(.50))
+        #self.model.add(Dense(128, activation='relu'))
+        self.model.add(Dense(3, activation='linear', kernel_initializer='glorot_uniform'))
+        self.model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
     def train(self, dataset):
         input = []
@@ -34,7 +32,7 @@ class TicTacToeModel:
             output.append(data[0])
 
         X = np.array(input).reshape((-1, self.numberOfInputs))
-        y = to_categorical(output, num_classes=9)
+        y = to_categorical(output, num_classes=3)
         # Train and test data split
         boundary = int(0.8 * len(X))
         X_train = X[:boundary]
