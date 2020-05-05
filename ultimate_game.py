@@ -427,11 +427,6 @@ class Game():
                 else:
                     selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
                     
-#            if type(selectedMove) == int or type(selectedMove) == str:
-#                for x in range(3):
-#                    for y in range(3):
-#                        if self.convenient_indexer[x][y] == selectedMove:
-#                            selectedMove = [x,y]
             self.move(selectedMove, playerToMove, board_index)
             board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
             winner, state = self.check_current_state(10)
