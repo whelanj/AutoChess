@@ -179,25 +179,25 @@ class Game():
             board = self.macroBoard
 
         # Check horizontals
-        if (board[0][0] == board[0][1] and board[0][1] == board[0][2] and board[0][0] is not 0):
+        if (board[0][0] == board[0][1] and board[0][1] == board[0][2] and board[0][0] != 0):
             return board[0][0], "Done"
-        if (board[1][0] == board[1][1] and board[1][1] == board[1][2] and board[1][0] is not 0):
+        if (board[1][0] == board[1][1] and board[1][1] == board[1][2] and board[1][0] != 0):
             return board[1][0], "Done"
-        if (board[2][0] == board[2][1] and board[2][1] == board[2][2] and board[2][0] is not 0):
+        if (board[2][0] == board[2][1] and board[2][1] == board[2][2] and board[2][0] != 0):
             return board[2][0], "Done"
 
         # Check verticals
-        if (board[0][0] == board[1][0] and board[1][0] == board[2][0] and board[0][0] is not 0):
+        if (board[0][0] == board[1][0] and board[1][0] == board[2][0] and board[0][0] != 0):
             return board[0][0], "Done"
-        if (board[0][1] == board[1][1] and board[1][1] == board[2][1] and board[0][1] is not 0):
+        if (board[0][1] == board[1][1] and board[1][1] == board[2][1] and board[0][1] != 0):
             return board[0][1], "Done"
-        if (board[0][2] == board[1][2] and board[1][2] == board[2][2] and board[0][2] is not 0):
+        if (board[0][2] == board[1][2] and board[1][2] == board[2][2] and board[0][2] != 0):
             return board[0][2], "Done"
 
         # Check diagonals
-        if (board[0][0] == board[1][1] and board[1][1] == board[2][2] and board[0][0] is not 0):
+        if (board[0][0] == board[1][1] and board[1][1] == board[2][2] and board[0][0] != 0):
             return board[1][1], "Done"
-        if (board[2][0] == board[1][1] and board[1][1] == board[0][2] and board[2][0] is not 0):
+        if (board[2][0] == board[1][1] and board[1][1] == board[0][2] and board[2][0] != 0):
             return board[1][1], "Done"
         if len(self.getAvailableMoves(board_number)) == 0:
             return None, "Draw"
@@ -272,7 +272,7 @@ class Game():
         for i in range(3):
             for j in range(3):
                 if self.convenient_indexer[i][j] == board_num:
-                    if self.macroBoard[i][j] is not 0:
+                    if self.macroBoard[i][j] != 0:
                         #   Player may choose any available board to play on if current is finished
                         availableBoards = self.getAvailableMoves(10)
                         choice = random.randint(0, availableBoards.__len__() - 1)
