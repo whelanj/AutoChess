@@ -705,7 +705,7 @@ class Game():
 
 if __name__ == "__main__":
     game = Game()
-    game.fullSimulateManyGames(1, 2000)
+    game.fullSimulateManyGames(-1, 2000)
     ticTacToeModel = TicTacToeModel(81, 9, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
     print("Simulating with Neural Network as X Player:")
