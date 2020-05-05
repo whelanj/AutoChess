@@ -582,7 +582,7 @@ class Game():
                         if nnPlayer == PLAYER_X_VAL:
                             value = model.predict(boardCopy, 0)
                         else:
-                            value = model.predict(boardCopy, 8)
+                            value = model.predict(boardCopy, 2)
                         if value > maxValue:
                             maxValue = value
                             bestMove = availableMove
