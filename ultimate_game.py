@@ -1,7 +1,8 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Apr 30 12:05:34 2020
-@author: nleach
+
 """
 
 import os
@@ -9,18 +10,25 @@ import random
 from model import TicTacToeModel
 import copy
 
+players = dict()
 PLAYER_X = 'X'
 PLAYER_O = 'O'
 EMPTY = ' '
+DRAW = 'D'
 PLAYER_X_VAL = -1
 PLAYER_O_VAL = 1
 EMPTY_VAL = 0
+DRAW_VAL = 2
+players[PLAYER_X_VAL] = PLAYER_X
+players[PLAYER_O_VAL] = PLAYER_O
+players[EMPTY_VAL] = EMPTY
+players[DRAW_VAL] = DRAW
 HORIZONTAL_SEPARATOR = ' | '
 VERTICAL_SEPARATOR = '---------------'
 GAME_STATE_X = -1
 GAME_STATE_O = 1
-GAME_STATE_DRAW = 0
-GAME_STATE_NOT_ENDED = 2
+GAME_STATE_DRAW = 2
+GAME_STATE_NOT_ENDED = 0
 
 
 class Game():
@@ -31,6 +39,9 @@ class Game():
         self.convenient_indexer = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 
     def resetBoard(self):
+# =============================================================================
+#         initializes board states and clears board at the start of each new game
+# =============================================================================
         self.miniBoard1 = [
             [0, 0, 0],
             [0, 0, 0],
@@ -88,82 +99,88 @@ class Game():
         self.fullBoardHistory = []
 
     def printBoard(self):
+# =============================================================================
+#         prints current board to screen
+# =============================================================================
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard1[0][0]) + ' || ' + str(self.miniBoard1[0][1]) + ' || ' + str(
-            self.miniBoard1[0][2]) + ' |   | '
-              + str(self.miniBoard2[0][0]) + ' || ' + str(self.miniBoard2[0][1]) + ' || ' + str(
-            self.miniBoard2[0][2]) + ' |   | '
-              + str(self.miniBoard3[0][0]) + ' || ' + str(self.miniBoard3[0][1]) + ' || ' + str(
-            self.miniBoard3[0][2]) + ' |')
+        print('| ' + players[(self.miniBoard1[0][0])] + ' || ' + players[(self.miniBoard1[0][1])] + ' || ' + players[(
+            self.miniBoard1[0][2])] + ' |   | '
+              + players[(self.miniBoard2[0][0])] + ' || ' + players[(self.miniBoard2[0][1])] + ' || ' + players[(
+            self.miniBoard2[0][2])] + ' |   | '
+              + players[(self.miniBoard3[0][0])] + ' || ' + players[(self.miniBoard3[0][1])] + ' || ' + players[(
+            self.miniBoard3[0][2])] + ' |')
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard1[1][0]) + ' || ' + str(self.miniBoard1[1][1]) + ' || ' + str(
-            self.miniBoard1[1][2]) + ' |   | '
-              + str(self.miniBoard2[1][0]) + ' || ' + str(self.miniBoard2[1][1]) + ' || ' + str(
-            self.miniBoard2[1][2]) + ' |   | '
-              + str(self.miniBoard3[1][0]) + ' || ' + str(self.miniBoard3[1][1]) + ' || ' + str(
-            self.miniBoard3[1][2]) + ' |')
+        print('| ' + players[(self.miniBoard1[1][0])] + ' || ' + players[(self.miniBoard1[1][1])] + ' || ' + players[(
+            self.miniBoard1[1][2])] + ' |   | '
+              + players[(self.miniBoard2[1][0])] + ' || ' + players[(self.miniBoard2[1][1])] + ' || ' + players[(
+            self.miniBoard2[1][2])] + ' |   | '
+              + players[(self.miniBoard3[1][0])] + ' || ' + players[(self.miniBoard3[1][1])] + ' || ' + players[(
+            self.miniBoard3[1][2])] + ' |')
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard1[2][0]) + ' || ' + str(self.miniBoard1[2][1]) + ' || ' + str(
-            self.miniBoard1[2][2]) + ' |   | '
-              + str(self.miniBoard2[2][0]) + ' || ' + str(self.miniBoard2[2][1]) + ' || ' + str(
-            self.miniBoard2[2][2]) + ' |   | '
-              + str(self.miniBoard3[2][0]) + ' || ' + str(self.miniBoard3[2][1]) + ' || ' + str(
-            self.miniBoard3[2][2]) + ' |')
+        print('| ' + players[(self.miniBoard1[2][0])] + ' || ' + players[(self.miniBoard1[2][1])] + ' || ' + players[(
+            self.miniBoard1[2][2])] + ' |   | '
+              + players[(self.miniBoard2[2][0])] + ' || ' + players[(self.miniBoard2[2][1])] + ' || ' + players[(
+            self.miniBoard2[2][2])] + ' |   | '
+              + players[(self.miniBoard3[2][0])] + ' || ' + players[(self.miniBoard3[2][1])] + ' || ' + players[(
+            self.miniBoard3[2][2])] + ' |')
         print('----------------  ----------------  ----------------')
         # Second row of boards
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard4[0][0]) + ' || ' + str(self.miniBoard4[0][1]) + ' || ' + str(
-            self.miniBoard4[0][2]) + ' |   | '
-              + str(self.miniBoard5[0][0]) + ' || ' + str(self.miniBoard5[0][1]) + ' || ' + str(
-            self.miniBoard5[0][2]) + ' |   | '
-              + str(self.miniBoard6[0][0]) + ' || ' + str(self.miniBoard6[0][1]) + ' || ' + str(
-            self.miniBoard6[0][2]) + ' |')
+        print('| ' + players[(self.miniBoard4[0][0])] + ' || ' + players[(self.miniBoard4[0][1])] + ' || ' + players[(
+            self.miniBoard4[0][2])] + ' |   | '
+              + players[(self.miniBoard5[0][0])] + ' || ' + players[(self.miniBoard5[0][1])] + ' || ' + players[(
+            self.miniBoard5[0][2])] + ' |   | '
+              + players[(self.miniBoard6[0][0])] + ' || ' + players[(self.miniBoard6[0][1])] + ' || ' + players[(
+            self.miniBoard6[0][2])] + ' |')
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard4[1][0]) + ' || ' + str(self.miniBoard4[1][1]) + ' || ' + str(
-            self.miniBoard4[1][2]) + ' |   | '
-              + str(self.miniBoard5[1][0]) + ' || ' + str(self.miniBoard5[1][1]) + ' || ' + str(
-            self.miniBoard5[1][2]) + ' |   | '
-              + str(self.miniBoard6[1][0]) + ' || ' + str(self.miniBoard6[1][1]) + ' || ' + str(
-            self.miniBoard6[1][2]) + ' |')
+        print('| ' + players[(self.miniBoard4[1][0])] + ' || ' + players[(self.miniBoard4[1][1])] + ' || ' + players[(
+            self.miniBoard4[1][2])] + ' |   | '
+              + players[(self.miniBoard5[1][0])] + ' || ' + players[(self.miniBoard5[1][1])] + ' || ' + players[(
+            self.miniBoard5[1][2])] + ' |   | '
+              + players[(self.miniBoard6[1][0])] + ' || ' + players[(self.miniBoard6[1][1])] + ' || ' + players[(
+            self.miniBoard6[1][2])] + ' |')
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard4[2][0]) + ' || ' + str(self.miniBoard4[2][1]) + ' || ' + str(
-            self.miniBoard4[2][2]) + ' |   | '
-              + str(self.miniBoard5[2][0]) + ' || ' + str(self.miniBoard5[2][1]) + ' || ' + str(
-            self.miniBoard5[2][2]) + ' |   | '
-              + str(self.miniBoard6[2][0]) + ' || ' + str(self.miniBoard6[2][1]) + ' || ' + str(
-            self.miniBoard6[2][2]) + ' |')
+        print('| ' + players[(self.miniBoard4[2][0])] + ' || ' + players[(self.miniBoard4[2][1])] + ' || ' + players[(
+            self.miniBoard4[2][2])] + ' |   | '
+              + players[(self.miniBoard5[2][0])] + ' || ' + players[(self.miniBoard5[2][1])] + ' || ' + players[(
+            self.miniBoard5[2][2])] + ' |   | '
+              + players[(self.miniBoard6[2][0])] + ' || ' + players[(self.miniBoard6[2][1])] + ' || ' + players[(
+            self.miniBoard6[2][2])] + ' |')
         print('----------------  ----------------  ----------------')
         # Third row of boards and overall board
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard7[0][0]) + ' || ' + str(self.miniBoard7[0][1]) + ' || ' + str(
-            self.miniBoard7[0][2]) + ' |   | '
-              + str(self.miniBoard8[0][0]) + ' || ' + str(self.miniBoard8[0][1]) + ' || ' + str(
-            self.miniBoard8[0][2]) + ' |   | '
-              + str(self.miniBoard9[0][0]) + ' || ' + str(self.miniBoard9[0][1]) + ' || ' + str(
-            self.miniBoard9[0][2]) + ' |   | '
-              + str(self.macroBoard[0][0]) + ' || ' + str(self.macroBoard[0][1]) + ' || ' + str(
-            self.macroBoard[0][2]) + ' |')
+        print('| ' + players[(self.miniBoard7[0][0])] + ' || ' + players[(self.miniBoard7[0][1])] + ' || ' + players[(
+            self.miniBoard7[0][2])] + ' |   | '
+              + players[(self.miniBoard8[0][0])] + ' || ' + players[(self.miniBoard8[0][1])] + ' || ' + players[(
+            self.miniBoard8[0][2])] + ' |   | '
+              + players[(self.miniBoard9[0][0])] + ' || ' + players[(self.miniBoard9[0][1])] + ' || ' + players[(
+            self.miniBoard9[0][2])] + ' |   | '
+              + players[(self.macroBoard[0][0])] + ' || ' + players[(self.macroBoard[0][1])] + ' || ' + players[(
+            self.macroBoard[0][2])] + ' |')
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard7[1][0]) + ' || ' + str(self.miniBoard7[1][1]) + ' || ' + str(
-            self.miniBoard7[1][2]) + ' |   | '
-              + str(self.miniBoard8[1][0]) + ' || ' + str(self.miniBoard8[1][1]) + ' || ' + str(
-            self.miniBoard8[1][2]) + ' |   | '
-              + str(self.miniBoard9[1][0]) + ' || ' + str(self.miniBoard9[1][1]) + ' || ' + str(
-            self.miniBoard9[1][2]) + ' |   | '
-              + str(self.macroBoard[1][0]) + ' || ' + str(self.macroBoard[1][1]) + ' || ' + str(
-            self.macroBoard[1][2]) + ' |')
+        print('| ' + players[(self.miniBoard7[1][0])] + ' || ' + players[(self.miniBoard7[1][1])] + ' || ' + players[(
+            self.miniBoard7[1][2])] + ' |   | '
+              + players[(self.miniBoard8[1][0])] + ' || ' + players[(self.miniBoard8[1][1])] + ' || ' + players[(
+            self.miniBoard8[1][2])] + ' |   | '
+              + players[(self.miniBoard9[1][0])] + ' || ' + players[(self.miniBoard9[1][1])] + ' || ' + players[(
+            self.miniBoard9[1][2])] + ' |   | '
+              + players[(self.macroBoard[1][0])] + ' || ' + players[(self.macroBoard[1][1])] + ' || ' + players[(
+            self.macroBoard[1][2])] + ' |')
         print('----------------  ----------------  ----------------')
-        print('| ' + str(self.miniBoard7[2][0]) + ' || ' + str(self.miniBoard7[2][1]) + ' || ' + str(
-            self.miniBoard7[2][2]) + ' |   | '
-              + str(self.miniBoard8[2][0]) + ' || ' + str(self.miniBoard8[2][1]) + ' || ' + str(
-            self.miniBoard8[2][2]) + ' |   | '
-              + str(self.miniBoard9[2][0]) + ' || ' + str(self.miniBoard9[2][1]) + ' || ' + str(
-            self.miniBoard9[2][2]) + ' |   | '
-              + str(self.macroBoard[2][0]) + ' || ' + str(self.macroBoard[2][1]) + ' || ' + str(
-            self.macroBoard[2][2]) + ' |')
+        print('| ' + players[(self.miniBoard7[2][0])] + ' || ' + players[(self.miniBoard7[2][1])] + ' || ' + players[(
+            self.miniBoard7[2][2])] + ' |   | '
+              + players[(self.miniBoard8[2][0])] + ' || ' + players[(self.miniBoard8[2][1])] + ' || ' + players[(
+            self.miniBoard8[2][2])] + ' |   | '
+              + players[(self.miniBoard9[2][0])] + ' || ' + players[(self.miniBoard9[2][1])] + ' || ' + players[(
+            self.miniBoard9[2][2])] + ' |   | '
+              + players[(self.macroBoard[2][0])] + ' || ' + players[(self.macroBoard[2][1])] + ' || ' + players[(
+            self.macroBoard[2][2])] + ' |')
         print('----------------  ----------------  ----------------')
 
     def check_current_state(self, board_number):
+# =============================================================================
+#         examines state of specific boards
+# =============================================================================
         # Check if draw
         board = []
         if board_number < 10:
@@ -198,6 +215,9 @@ class Game():
         return None, "Not Done"
 
     def getGameResult(self):
+# =============================================================================
+#         examines state of the macro board
+# =============================================================================
         for i in range(len(self.macroBoard)):
             for j in range(len(self.macroBoard[i])):
                 if self.macroBoard[i][j] == EMPTY_VAL:
@@ -241,42 +261,78 @@ class Game():
 
     def getAvailableMoves(self, board_restriction):
         # =============================================================================
-        #         looks at specific board
+        #         looks at specific board for available moves
         # =============================================================================
         availableMoves = []
-        if board_restriction < 10:
-            board = self.fullBoard[board_restriction - 1]
-        elif board_restriction == 10:
-            board = self.macroBoard
-        for i in range(3):
-            for j in range(3):
-                if (board[i][j]) == EMPTY_VAL:
-                    availableMoves.append([i, j])
+#        print(board_restriction)
+        try:
+            if board_restriction < 10:
+                board = self.fullBoard[board_restriction - 1]
+                for i in range(3):
+                    for j in range(3):
+                        if (board[i][j]) == EMPTY_VAL:
+                            availableMoves.append([i, j])
+            elif board_restriction == 10:
+                board = self.macroBoard
+                for i in range(3):
+                    for j in range(3):
+                        if (board[i][j]) == EMPTY_VAL:
+                            availableMoves.append([i, j])
+            elif board_restriction == 11:
+                board = self.fullBoard
+                for i in range(9):
+                    for j in range(3):
+                        for k in range(3):
+                            if (board[i][j][k]) == EMPTY_VAL:
+                                availableMoves.append([i, j, k])
+        except TypeError:
+            print(board_restriction)
+            raise TypeError
 
         return availableMoves
 
     def confirmBoard(self, board_num):
+# =============================================================================
+#         determines if a board is complete or if can be played on
+# =============================================================================
         for i in range(3):
             for j in range(3):
                 if self.convenient_indexer[i][j] == board_num:
-                    if self.macroBoard[i][j] is not 0:
+                    if self.macroBoard[i][j] != 0:
                         #   Player may choose any available board to play on if current is finished
-                        availableBoards = self.getAvailableMoves(10)
-                        choice = random.randint(0, availableBoards.__len__() - 1)
-                        # for availableBoard in availableBoards:
-                        # Potential function to determine optimal board, else just choose first available
-                        return self.convenient_indexer[availableBoards[choice][0]][availableBoards[choice][1]]
+#                        availableBoards = self.getAvailableMoves(10)
+#                        choice = random.randint(0, availableBoards.__len__() - 1)
+                        board_num = 11
+                        return board_num #self.convenient_indexer[availableBoards[choice][0]][availableBoards[choice][1]]
                     else:
                         return board_num
+        if board_num == 11:
+            return board_num
 
     def addToHistory(self, fullBoard):
+# =============================================================================
+#         adds to the board history
+# =============================================================================
         self.fullBoardHistory.append(fullBoard)
 
     def printHistory(self):
+# =============================================================================
+#         prints the board history
+# =============================================================================
         print(self.fullBoardHistory)
 
     def move(self, position, player, board_restriction):
-        self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
+# =============================================================================
+#         marks player moves in the correct positions on the different boards
+# =============================================================================
+        try:
+            self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
+        except TypeError:
+            print('board restriction is ' + str(board_restriction))
+            print('position is '+ str(position))
+            
+            raise TypeError
+            
         winner, done = self.check_current_state(board_restriction)
         if (done == "Done"):
             for x in range(3):
@@ -295,14 +351,49 @@ class Game():
         # =============================================================================
         #         simulates game with players moving randomly, using full ultimate board
         # =============================================================================
-        board_num = 1
+        board_num = random.randint(1,9)
         done = "Not Done"
         winner = None
         while (done == "Not Done"):
             board_num = self.confirmBoard(board_num)
-            allAvailableMoves = self.getAvailableMoves(board_num)
-            selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
-            self.move(selectedMove, playerToMove, board_num)
+            if board_num == 11:
+                availableBoards = self.getAvailableMoves(10)
+                availableBoardNums = []
+                for board in availableBoards:
+                    availableBoardNums.append(self.convenient_indexer[board[0]][board[1]])
+                allAvailableMoves = []
+                for boardNum in availableBoardNums:
+                    allAvailableMoves.append([boardNum, self.getAvailableMoves(boardNum)])
+                try:
+                    selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+                    board_num = selectedMove[0]
+                    a = selectedMove
+                    selectedMove.remove(selectedMove[0])
+                    selectedMove = selectedMove[0][random.randrange(0, len(selectedMove))]
+                    self.move(selectedMove, playerToMove, board_num)
+                except ValueError:
+                    self.printBoard()
+                    print("available moves are " + str(allAvailableMoves))
+                    print("board num is " + str(board_num))
+                    raise ValueError
+                except TypeError:
+                    self.printBoard()
+                    print(allAvailableMoves)
+                    print('selected move is ' + str(a))
+                    
+                
+                
+            else:
+                allAvailableMoves = self.getAvailableMoves(board_num)
+                try:
+                    selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+                    self.move(selectedMove, playerToMove, board_num)
+                except ValueError:
+                    self.printBoard()
+                    print("available moves are " + str(allAvailableMoves))
+                    print("board num is " + str(board_num))
+                    raise ValueError
+            
             board_num = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
             winner, done = self.check_current_state(10)
             if playerToMove == PLAYER_X_VAL:
@@ -434,13 +525,153 @@ class Game():
             else:
                 playerToMove = PLAYER_X_VAL
 
-    #    skipped this function
+    def getRowAndColumn(self, block_number):
+# =============================================================================
+#         converts human block input to the row and column positions
+# =============================================================================
+        block_choice = 'invalid'
+        while block_choice == 'invalid':
+            if block_number in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
+                block_choice = 'valid'
+            else:
+                block_number = int(input('Choice was invalid--Please choose a number between 1 and 9: '))
+        if str(block_number) in '123':
+            row = 0
+        elif str(block_number) in '456':
+            row = 1
+        elif str(block_number) in '789':
+            row = 2
+        else:
+            block_number = int(input('Choice was invalid--Please choose a number between 1 and 9: '))
+
+        if str(block_number) in '147':
+            column = 0
+        elif str(block_number) in '258':
+            column = 1
+        elif str(block_number) in '369':
+            column = 2
+        return row, column
+
+    def chooseBoard(self):
+# =============================================================================
+#         allows the human to choose a board when needed
+# =============================================================================
+        board_choice = 'invalid'
+        availableBoards = self.getAvailableMoves(10)
+        availableBoardNums = []
+        for board in availableBoards:
+            availableBoardNums.append(self.convenient_indexer[board[0]][board[1]])
+        while board_choice == 'invalid':
+            board_index = int(input('Choose a board index 1-9: '))
+            if board_index in availableBoardNums:
+                board_choice = 'valid'
+            else:
+                board_index = int(input('Please a valid board index 1-9: '))
+        return board_index
+
+
+    def personVsAIgame(self, nnPlayer, model):
+        # =============================================================================
+        #         real human can play a game against the AI, using the full ultimate board
+        # =============================================================================
+        playerToMove = PLAYER_X_VAL
+        state = "Not Done"
+        board_index = 11
+        while (state == "Not Done"):
+           board_index = self.confirmBoard(board_index)
+           if board_index == 11:
+                availableBoards = self.getAvailableMoves(10)
+                availableBoardNums = []
+                for board in availableBoards:
+                    availableBoardNums.append(self.convenient_indexer[board[0]][board[1]])
+                allAvailableMoves = []
+                for boardNum in availableBoardNums:
+                    allAvailableMoves.append([boardNum, self.getAvailableMoves(boardNum)])
+                if playerToMove == nnPlayer:
+                    maxValue = 0
+                    bestMove = allAvailableMoves[0]
+                    for boardNum in allAvailableMoves:
+                        for availableMove in boardNum[1]:
+                            # get a copy of a board
+                            boardCopy = copy.deepcopy(self.fullBoard)
+#                            print('availableMove is ' + str(availableMove))
+                            boardCopy[boardNum[0] - 1][availableMove[0]][availableMove[1]] = nnPlayer
+                            if nnPlayer == PLAYER_X_VAL:
+                                value = model.predict(boardCopy, 0)
+                            else:
+                                value = model.predict(boardCopy, 2)
+                            if value > maxValue:
+                                maxValue = value
+                                bestMove = [boardNum[0], availableMove]
+                    selectedMove = bestMove[1]
+                    board_index = bestMove[0]
+                    print("Your robotic opponent plays on board {0} in block {1}".format(board_index,self.convenient_indexer[selectedMove[0]][selectedMove[1]]))
+                else:
+                    board_index = self.chooseBoard()
+                    allAvailableMoves = self.getAvailableMoves(board_index)
+                    print("Puny human dares to play against the mighty AI!")
+                    print('You must play on board {}'.format(board_index))
+                    moveValidity = 'invalid'
+                    while moveValidity == 'invalid':
+                        selectedRow, selectedColumn = self.getRowAndColumn(
+                            int(input('Please choose an empty block to play in: ')))
+                        selectedMove = [selectedRow, selectedColumn]
+                        if selectedMove in allAvailableMoves:
+                            moveValidity = 'valid'
+                        else:
+                            print('Your move choice was invalid, please choose again.')
+                    print("Human playing move: {}".format(selectedMove))
+           else:
+                allAvailableMoves = self.getAvailableMoves(board_index)
+                if playerToMove == nnPlayer:
+                    maxValue = 0
+                    bestMove = allAvailableMoves[0]
+                    for availableMove in allAvailableMoves:
+                        # get a copy of a board
+                        boardCopy = copy.deepcopy(self.fullBoard)
+                        boardCopy[board_index - 1][availableMove[0]][availableMove[1]] = nnPlayer
+                        if nnPlayer == PLAYER_X_VAL:
+                            value = model.predict(boardCopy, 0)
+                        else:
+                            value = model.predict(boardCopy, 2)
+                        if value > maxValue:
+                            maxValue = value
+                            bestMove = availableMove
+                    selectedMove = bestMove
+                    print("Your robotic opponent plays on board {0} in block {1}".format(board_index,self.convenient_indexer[selectedMove[0]][selectedMove[1]]))
+                else:
+                    print("Puny human dares to play against the mighty AI!")
+                    print('You must play on board {}'.format(board_index))
+                    moveValidity = 'invalid'
+                    while moveValidity == 'invalid':
+                        selectedRow, selectedColumn = self.getRowAndColumn(
+                            int(input('Please choose an empty block to play in: ')))
+                        selectedMove = [selectedRow, selectedColumn]
+                        if selectedMove in allAvailableMoves:
+                            moveValidity = 'valid'
+                        else:
+                            print('Your move choice was invalid, please choose again.')
+                    print("Human playing on board {0} in block {1}".format(board_index, self.convenient_indexer[selectedMove[0]][selectedMove[1]]))
+           self.move(selectedMove, playerToMove, board_index)
+           self.printBoard()
+           board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
+           winner, state = self.check_current_state(10)
+           if playerToMove == PLAYER_X_VAL:
+                playerToMove = PLAYER_O_VAL
+           else:
+                playerToMove = PLAYER_X_VAL
+
+
     def getTrainingHistory(self):
+# =============================================================================
+#         retrieves the training history
+# =============================================================================
         return self.trainingHistory
 
     def fullSimulateManyGames(self, playerToMove, numberOfGames):
         # =============================================================================
-        #         simulates many games with only random players and the full board
+        #         simulates many games with only players moving randomly using
+        #       using the full ultimate board        
         # =============================================================================
         playerXWins = 0
         playerOWins = 0
@@ -454,7 +685,7 @@ class Game():
                 playerXWins = playerXWins + 1
             elif winner == PLAYER_O_VAL:
                 playerOWins = playerOWins + 1
-            else:
+            elif self.getGameResult() == DRAW_VAL:
                 draws = draws + 1
         totalWins = playerXWins + playerOWins + draws
         print('X Wins: ' + str(int(playerXWins * 100 / totalWins)) + '%')
@@ -464,7 +695,7 @@ class Game():
 
     def simulateManyNeuralNetworkGames(self, nnPlayer, numberOfGames, model):
         # =============================================================================
-        #         simulates many games with only random players and the full board
+        #         simulates many games with the neural network player against a player making random moves
         # =============================================================================
         nnPlayerWins = 0
         randomPlayerWins = 0
@@ -500,7 +731,7 @@ class Game():
         print("NN player value: {}".format(nnPlayer))
 
         person = input('Do you want to play? ')
-        while person != 'No':
+        while person != 'No' or person != 'no':
             self.resetBoard()
             self.personVsAIgame(nnPlayer, model)
             self.printBoard()
@@ -527,11 +758,17 @@ class Game():
 
 if __name__ == "__main__":
     game = Game()
+
     game.fullSimulateManyGames(-1, 50000)
     ticTacToeModel = TicTacToeModel(81, 3, 100, 128)
     ticTacToeModel.train(game.getTrainingHistory())
     print("Simulating with Neural Network as X Player:")
     game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 1000, ticTacToeModel)
     print("Simulating with Neural Network as O Player:")
+
     game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 1000, ticTacToeModel)
     game.simulatePvCgame(PLAYER_O_VAL, ticTacToeModel)
+
+    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 10, ticTacToeModel)
+    game.simulatePvCgame(PLAYER_O_VAL, ticTacToeModel)
+

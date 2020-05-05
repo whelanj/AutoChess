@@ -1,7 +1,7 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Sun Apr 19 20:07:12 2020
-@author: jwhel
 """
 
 from keras.layers import Dense
