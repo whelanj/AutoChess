@@ -7,18 +7,21 @@ players = dict()
 PLAYER_X = 'X'
 PLAYER_O = 'O'
 EMPTY = ' '
+DRAW = 'D'
 PLAYER_X_VAL = -1
 PLAYER_O_VAL = 1
+EMPTY_VAL = 0
+DRAW_VAL = 2
 players[PLAYER_X_VAL] = PLAYER_X
 players[PLAYER_O_VAL] = PLAYER_O
 players[EMPTY_VAL] = EMPTY
-EMPTY_VAL = 0
+players[DRAW_VAL] = DRAW
 HORIZONTAL_SEPARATOR = ' | '
 VERTICAL_SEPARATOR = '---------------'
 GAME_STATE_X = -1
 GAME_STATE_O = 1
-GAME_STATE_DRAW = 0
-GAME_STATE_NOT_ENDED = 2
+GAME_STATE_DRAW = 2
+GAME_STATE_NOT_ENDED = 0
 
 
 class Game():
@@ -334,7 +337,7 @@ class Game():
             for x in range(3):
                 for y in range(3):
                     if self.convenient_indexer[x][y] == board_restriction:
-                        self.macroBoard[x][y] = 2
+                        self.macroBoard[x][y] = DRAW_VAL
                         self.addToHistory(copy.deepcopy(self.fullBoard))
 
     def fullSimulate(self, playerToMove):
@@ -346,13 +349,45 @@ class Game():
         winner = None
         while (done == "Not Done"):
             board_num = self.confirmBoard(board_num)
-            allAvailableMoves = self.getAvailableMoves(board_num)
-            selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
             if board_num == 11:
-                board_num = selectedMove[0]
-                selectedMove.remove(selectedMove[0])
+                availableBoards = self.getAvailableMoves(10)
+                availableBoardNums = []
+                for board in availableBoards:
+                    availableBoardNums.append(self.convenient_indexer[board[0]][board[1]])
+                allAvailableMoves = []
+                for boardNum in availableBoardNums:
+                    allAvailableMoves.append([boardNum, self.getAvailableMoves(boardNum)])
+                try:
+                    selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+                    board_num = selectedMove[0]
+                    a = selectedMove
+                    selectedMove.remove(selectedMove[0])
+                    selectedMove = selectedMove[0][random.randrange(0, len(selectedMove))]
+                    self.move(selectedMove, playerToMove, board_num)
+                except ValueError:
+                    self.printBoard()
+                    print("available moves are " + str(allAvailableMoves))
+                    print("board num is " + str(board_num))
+                    raise ValueError
+                except TypeError:
+                    self.printBoard()
+                    print(allAvailableMoves)
+                    print('selected move is ' + str(a))
+                    
+                
+                
+            else:
+                allAvailableMoves = self.getAvailableMoves(board_num)
+                try:
+                    selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+                    self.move(selectedMove, playerToMove, board_num)
+                except ValueError:
+                    self.printBoard()
+                    print("available moves are " + str(allAvailableMoves))
+                    print("board num is " + str(board_num))
+                    raise ValueError
             
-            self.move(selectedMove, playerToMove, board_num)
+            
             board_num = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
             winner, done = self.check_current_state(10)
             if playerToMove == PLAYER_X_VAL:
@@ -427,6 +462,11 @@ class Game():
                 else:
                     selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
                     
+#            if type(selectedMove) == int or type(selectedMove) == str:
+#                for x in range(3):
+#                    for y in range(3):
+#                        if self.convenient_indexer[x][y] == selectedMove:
+#                            selectedMove = [x,y]
             self.move(selectedMove, playerToMove, board_index)
             board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
             winner, state = self.check_current_state(10)
@@ -542,7 +582,7 @@ class Game():
                         if nnPlayer == PLAYER_X_VAL:
                             value = model.predict(boardCopy, 0)
                         else:
-                            value = model.predict(boardCopy, 2)
+                            value = model.predict(boardCopy, 8)
                         if value > maxValue:
                             maxValue = value
                             bestMove = availableMove
@@ -592,7 +632,7 @@ class Game():
                 playerXWins = playerXWins + 1
             elif self.getGameResult() == PLAYER_O_VAL:
                 playerOWins = playerOWins + 1
-            else:
+            elif self.getGameResult() == DRAW_VAL:
                 draws = draws + 1
         totalWins = playerXWins + playerOWins + draws
         print('X Wins: ' + str(int(playerXWins * 100 / totalWins)) + '%')
@@ -665,8 +705,8 @@ class Game():
 
 if __name__ == "__main__":
     game = Game()
-    game.fullSimulateManyGames(1, 10)
-    ticTacToeModel = TicTacToeModel(81, 3, 100, 32)
+    game.fullSimulateManyGames(1, 2000)
+    ticTacToeModel = TicTacToeModel(81, 9, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
     print("Simulating with Neural Network as X Player:")
     game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 10, ticTacToeModel)
