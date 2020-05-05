@@ -179,25 +179,25 @@ class Game():
             board = self.macroBoard
 
         # Check horizontals
-        if (board[0][0] == board[0][1] and board[0][1] == board[0][2] and board[0][0] != 0):
+        if (board[0][0] == board[0][1] and board[0][1] == board[0][2] and board[0][0] is not 0):
             return board[0][0], "Done"
-        if (board[1][0] == board[1][1] and board[1][1] == board[1][2] and board[1][0] != 0):
+        if (board[1][0] == board[1][1] and board[1][1] == board[1][2] and board[1][0] is not 0):
             return board[1][0], "Done"
-        if (board[2][0] == board[2][1] and board[2][1] == board[2][2] and board[2][0] != 0):
+        if (board[2][0] == board[2][1] and board[2][1] == board[2][2] and board[2][0] is not 0):
             return board[2][0], "Done"
 
         # Check verticals
-        if (board[0][0] == board[1][0] and board[1][0] == board[2][0] and board[0][0] != 0):
+        if (board[0][0] == board[1][0] and board[1][0] == board[2][0] and board[0][0] is not 0):
             return board[0][0], "Done"
-        if (board[0][1] == board[1][1] and board[1][1] == board[2][1] and board[0][1] != 0):
+        if (board[0][1] == board[1][1] and board[1][1] == board[2][1] and board[0][1] is not 0):
             return board[0][1], "Done"
-        if (board[0][2] == board[1][2] and board[1][2] == board[2][2] and board[0][2] != 0):
+        if (board[0][2] == board[1][2] and board[1][2] == board[2][2] and board[0][2] is not 0):
             return board[0][2], "Done"
 
         # Check diagonals
-        if (board[0][0] == board[1][1] and board[1][1] == board[2][2] and board[0][0] != 0):
+        if (board[0][0] == board[1][1] and board[1][1] == board[2][2] and board[0][0] is not 0):
             return board[1][1], "Done"
-        if (board[2][0] == board[1][1] and board[1][1] == board[0][2] and board[2][0] != 0):
+        if (board[2][0] == board[1][1] and board[1][1] == board[0][2] and board[2][0] is not 0):
             return board[1][1], "Done"
         if len(self.getAvailableMoves(board_number)) == 0:
             return None, "Draw"
@@ -254,14 +254,30 @@ class Game():
         #         looks at specific board for available moves
         # =============================================================================
         availableMoves = []
-        if board_restriction < 10:
-            board = self.fullBoard[board_restriction - 1]
-        elif board_restriction == 10:
-            board = self.macroBoard
-        for i in range(3):
-            for j in range(3):
-                if (board[i][j]) == EMPTY_VAL:
-                    availableMoves.append([i, j])
+#        print(board_restriction)
+        try:
+            if board_restriction < 10:
+                board = self.fullBoard[board_restriction - 1]
+                for i in range(3):
+                    for j in range(3):
+                        if (board[i][j]) == EMPTY_VAL:
+                            availableMoves.append([i, j])
+            elif board_restriction == 10:
+                board = self.macroBoard
+                for i in range(3):
+                    for j in range(3):
+                        if (board[i][j]) == EMPTY_VAL:
+                            availableMoves.append([i, j])
+            elif board_restriction == 11:
+                board = self.fullBoard
+                for i in range(9):
+                    for j in range(3):
+                        for k in range(3):
+                            if (board[i][j][k]) == EMPTY_VAL:
+                                availableMoves.append([i, j, k])
+        except TypeError:
+            print(board_restriction)
+            raise TypeError
 
         return availableMoves
 
@@ -274,13 +290,14 @@ class Game():
                 if self.convenient_indexer[i][j] == board_num:
                     if self.macroBoard[i][j] != 0:
                         #   Player may choose any available board to play on if current is finished
-                        availableBoards = self.getAvailableMoves(10)
-                        choice = random.randint(0, availableBoards.__len__() - 1)
-                        # for availableBoard in availableBoards:
-                        # Potential function to determine optimal board, else just choose first available
-                        return self.convenient_indexer[availableBoards[choice][0]][availableBoards[choice][1]]
+#                        availableBoards = self.getAvailableMoves(10)
+#                        choice = random.randint(0, availableBoards.__len__() - 1)
+                        board_num = 11
+                        return board_num #self.convenient_indexer[availableBoards[choice][0]][availableBoards[choice][1]]
                     else:
                         return board_num
+        if board_num == 11:
+            return board_num
 
     def addToHistory(self, fullBoard):
 # =============================================================================
@@ -298,7 +315,14 @@ class Game():
 # =============================================================================
 #         marks player moves in the correct positions on the different boards
 # =============================================================================
-        self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
+        try:
+            self.fullBoard[board_restriction - 1][position[0]][position[1]] = player
+        except TypeError:
+            print('board restriction is ' + str(board_restriction))
+            print('position is '+ str(position))
+            
+            raise TypeError
+            
         winner, done = self.check_current_state(board_restriction)
         if (done == "Done"):
             for x in range(3):
@@ -317,13 +341,17 @@ class Game():
         # =============================================================================
         #         simulates game with players moving randomly, using full ultimate board
         # =============================================================================
-        board_num = 1
+        board_num = random.randint(1,9)
         done = "Not Done"
         winner = None
         while (done == "Not Done"):
             board_num = self.confirmBoard(board_num)
             allAvailableMoves = self.getAvailableMoves(board_num)
             selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+            if board_num == 11:
+                board_num = selectedMove[0]
+                selectedMove.remove(selectedMove[0])
+            
             self.move(selectedMove, playerToMove, board_num)
             board_num = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
             winner, done = self.check_current_state(10)
@@ -341,27 +369,69 @@ class Game():
         # =============================================================================
         playerToMove = PLAYER_X_VAL
         state = "Not Done"
-        board_index = 1
+        board_index = 11
         while (state == "Not Done"):
             board_index = self.confirmBoard(board_index)
-            allAvailableMoves = self.getAvailableMoves(board_index)
-            if playerToMove == nnPlayer:
-                maxValue = 0
-                bestMove = allAvailableMoves[0]
-                for availableMove in allAvailableMoves:
-                    # get a copy of a board
-                    boardCopy = copy.deepcopy(self.fullBoard)
-                    boardCopy[board_index - 1][availableMove[0]][availableMove[1]] = nnPlayer
-                    if nnPlayer == PLAYER_X_VAL:
-                        value = model.predict(boardCopy, 0)
-                    else:
-                        value = model.predict(boardCopy, 2)
-                    if value > maxValue:
-                        maxValue = value
-                        bestMove = availableMove
-                selectedMove = bestMove
+            if board_index == 11:
+                availableBoards = self.getAvailableMoves(10)
+                availableBoardNums = []
+                for board in availableBoards:
+                    availableBoardNums.append(self.convenient_indexer[board[0]][board[1]])
+                allAvailableMoves = []
+                for boardNum in availableBoardNums:
+                    allAvailableMoves.append([boardNum, self.getAvailableMoves(boardNum)])
+                if playerToMove == nnPlayer:
+                    maxValue = 0
+                    bestMove = allAvailableMoves[0]
+                    for boardNum in allAvailableMoves:
+                        for availableMove in boardNum[1]:
+                            # get a copy of a board
+                            boardCopy = copy.deepcopy(self.fullBoard)
+#                            print('availableMove is ' + str(availableMove))
+                            boardCopy[boardNum[0] - 1][availableMove[0]][availableMove[1]] = nnPlayer
+                            if nnPlayer == PLAYER_X_VAL:
+                                value = model.predict(boardCopy, 0)
+                            else:
+                                value = model.predict(boardCopy, 2)
+                            if value > maxValue:
+                                maxValue = value
+                                bestMove = [boardNum[0], availableMove]
+                    selectedMove = bestMove[1]
+                    board_index = bestMove[0]
+                else:
+                    availableBoards = self.getAvailableMoves(10)
+                    availableBoardNums = []
+                    for board in availableBoards:
+                        availableBoardNums.append(self.convenient_indexer[board[0]][board[1]])
+                    choice = random.randint(0, availableBoardNums.__len__()-1)
+                    board_index = availableBoardNums[choice]
+                    selectedMove = random.choice(self.getAvailableMoves(board_index))
+
             else:
-                selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+                allAvailableMoves = self.getAvailableMoves(board_index)
+                if playerToMove == nnPlayer:
+                    maxValue = 0
+                    bestMove = allAvailableMoves[0]
+                    for availableMove in allAvailableMoves:
+                        # get a copy of a board
+                        boardCopy = copy.deepcopy(self.fullBoard)
+                        boardCopy[board_index - 1][availableMove[0]][availableMove[1]] = nnPlayer
+                        if nnPlayer == PLAYER_X_VAL:
+                            value = model.predict(boardCopy, 0)
+                        else:
+                            value = model.predict(boardCopy, 2)
+                        if value > maxValue:
+                            maxValue = value
+                            bestMove = availableMove
+                    selectedMove = bestMove
+                else:
+                    selectedMove = allAvailableMoves[random.randrange(0, len(allAvailableMoves))]
+                    
+#            if type(selectedMove) == int or type(selectedMove) == str:
+#                for x in range(3):
+#                    for y in range(3):
+#                        if self.convenient_indexer[x][y] == selectedMove:
+#                            selectedMove = [x,y]
             self.move(selectedMove, playerToMove, board_index)
             board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
             winner, state = self.check_current_state(10)
@@ -402,9 +472,13 @@ class Game():
 #         allows the human to choose a board when needed
 # =============================================================================
         board_choice = 'invalid'
+        availableBoards = self.getAvailableMoves(10)
+        availableBoardNums = []
+        for board in availableBoards:
+            availableBoardNums.append(self.convenient_indexer[board[0]][board[1]])
         while board_choice == 'invalid':
             board_index = int(input('Choose a board index 1-9: '))
-            if board_index in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
+            if board_index in availableBoardNums:
                 board_choice = 'valid'
             else:
                 board_index = int(input('Please a valid board index 1-9: '))
@@ -416,46 +490,89 @@ class Game():
         # =============================================================================
         playerToMove = PLAYER_X_VAL
         state = "Not Done"
-        board_index = self.chooseBoard()
+        board_index = 11
         while (state == "Not Done"):
-            board_index = self.confirmBoard(board_index)
-            allAvailableMoves = self.getAvailableMoves(board_index)
-            if playerToMove == nnPlayer:
-                maxValue = 0
-                bestMove = allAvailableMoves[0]
-                for availableMove in allAvailableMoves:
-                    # get a copy of a board
-                    boardCopy = copy.deepcopy(self.fullBoard)
-                    boardCopy[board_index - 1][availableMove[0]][availableMove[1]] = nnPlayer
-                    if nnPlayer == PLAYER_X_VAL:
-                        value = model.predict(boardCopy, 0)
-                    else:
-                        value = model.predict(boardCopy, 8)
-                    if value > maxValue:
-                        maxValue = value
-                        bestMove = availableMove
-                selectedMove = bestMove
-                print("NN playing best move: {}".format(selectedMove))
-            else:
-                print("Puny human dares to play against the mighty AI!")
-                print('You must play on board {}'.format(board_index))
-                moveValidity = 'invalid'
-                while moveValidity == 'invalid':
-                    selectedRow, selectedColumn = self.getRowAndColumn(
-                        int(input('Please choose an empty block to play in: ')))
-                    selectedMove = [selectedRow, selectedColumn]
-                    if selectedMove in allAvailableMoves:
-                        moveValidity = 'valid'
-                    else:
-                        print('Your move choice was invalid, please choose again.')
-                print("Human playing move: {}".format(selectedMove))
-            self.move(selectedMove, playerToMove, board_index)
-            self.printBoard()
-            board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
-            winner, state = self.check_current_state(10)
-            if playerToMove == PLAYER_X_VAL:
+           board_index = self.confirmBoard(board_index)
+           if board_index == 11:
+                availableBoards = self.getAvailableMoves(10)
+                availableBoardNums = []
+                for board in availableBoards:
+                    availableBoardNums.append(self.convenient_indexer[board[0]][board[1]])
+                allAvailableMoves = []
+                for boardNum in availableBoardNums:
+                    allAvailableMoves.append([boardNum, self.getAvailableMoves(boardNum)])
+                if playerToMove == nnPlayer:
+                    maxValue = 0
+                    bestMove = allAvailableMoves[0]
+                    for boardNum in allAvailableMoves:
+                        for availableMove in boardNum[1]:
+                            # get a copy of a board
+                            boardCopy = copy.deepcopy(self.fullBoard)
+#                            print('availableMove is ' + str(availableMove))
+                            boardCopy[boardNum[0] - 1][availableMove[0]][availableMove[1]] = nnPlayer
+                            if nnPlayer == PLAYER_X_VAL:
+                                value = model.predict(boardCopy, 0)
+                            else:
+                                value = model.predict(boardCopy, 2)
+                            if value > maxValue:
+                                maxValue = value
+                                bestMove = [boardNum[0], availableMove]
+                    selectedMove = bestMove[1]
+                    board_index = bestMove[0]
+                    print("Your robotic opponent plays on board {0} in block {1}".format(board_index,self.convenient_indexer[selectedMove[0]][selectedMove[1]]))
+                else:
+                    board_index = self.chooseBoard()
+                    allAvailableMoves = self.getAvailableMoves(board_index)
+                    print("Puny human dares to play against the mighty AI!")
+                    print('You must play on board {}'.format(board_index))
+                    moveValidity = 'invalid'
+                    while moveValidity == 'invalid':
+                        selectedRow, selectedColumn = self.getRowAndColumn(
+                            int(input('Please choose an empty block to play in: ')))
+                        selectedMove = [selectedRow, selectedColumn]
+                        if selectedMove in allAvailableMoves:
+                            moveValidity = 'valid'
+                        else:
+                            print('Your move choice was invalid, please choose again.')
+                    print("Human playing move: {}".format(selectedMove))
+           else:
+                allAvailableMoves = self.getAvailableMoves(board_index)
+                if playerToMove == nnPlayer:
+                    maxValue = 0
+                    bestMove = allAvailableMoves[0]
+                    for availableMove in allAvailableMoves:
+                        # get a copy of a board
+                        boardCopy = copy.deepcopy(self.fullBoard)
+                        boardCopy[board_index - 1][availableMove[0]][availableMove[1]] = nnPlayer
+                        if nnPlayer == PLAYER_X_VAL:
+                            value = model.predict(boardCopy, 0)
+                        else:
+                            value = model.predict(boardCopy, 8)
+                        if value > maxValue:
+                            maxValue = value
+                            bestMove = availableMove
+                    selectedMove = bestMove
+                    print("Your robotic opponent plays on board {0} in block {1}".format(board_index,self.convenient_indexer[selectedMove[0]][selectedMove[1]]))
+                else:
+                    print("Puny human dares to play against the mighty AI!")
+                    print('You must play on board {}'.format(board_index))
+                    moveValidity = 'invalid'
+                    while moveValidity == 'invalid':
+                        selectedRow, selectedColumn = self.getRowAndColumn(
+                            int(input('Please choose an empty block to play in: ')))
+                        selectedMove = [selectedRow, selectedColumn]
+                        if selectedMove in allAvailableMoves:
+                            moveValidity = 'valid'
+                        else:
+                            print('Your move choice was invalid, please choose again.')
+                    print("Human playing on board {0} in block {1}".format(board_index, self.convenient_indexer[selectedMove[0]][selectedMove[1]]))
+           self.move(selectedMove, playerToMove, board_index)
+           self.printBoard()
+           board_index = self.convenient_indexer[selectedMove[0]][selectedMove[1]]
+           winner, state = self.check_current_state(10)
+           if playerToMove == PLAYER_X_VAL:
                 playerToMove = PLAYER_O_VAL
-            else:
+           else:
                 playerToMove = PLAYER_X_VAL
 
 
@@ -526,7 +643,7 @@ class Game():
         print("NN player value: {}".format(nnPlayer))
 
         person = input('Do you want to play? ')
-        while person != 'No':
+        while person != 'No' or person != 'no':
             self.resetBoard()
             self.personVsAIgame(nnPlayer, model)
             self.printBoard()
@@ -553,11 +670,11 @@ class Game():
 
 if __name__ == "__main__":
     game = Game()
-    game.fullSimulateManyGames(1, 100)
+    game.fullSimulateManyGames(1, 10)
     ticTacToeModel = TicTacToeModel(81, 9, 100, 32)
     ticTacToeModel.train(game.getTrainingHistory())
     print("Simulating with Neural Network as X Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 100, ticTacToeModel)
+    game.simulateManyNeuralNetworkGames(PLAYER_X_VAL, 10, ticTacToeModel)
     print("Simulating with Neural Network as O Player:")
-    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 100, ticTacToeModel)
+    game.simulateManyNeuralNetworkGames(PLAYER_O_VAL, 10, ticTacToeModel)
     game.simulatePvCgame(PLAYER_O_VAL, ticTacToeModel)
