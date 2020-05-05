@@ -1,3 +1,9 @@
+
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Apr 19 20:07:12 2020
+"""
+
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.models import Sequential
@@ -14,9 +20,9 @@ class TicTacToeModel:
         self.numberOfOutputs = numberOfOutputs
         self.model = Sequential()
         self.model.add(Dense(81, input_dim=81, activation='relu'))
-        self.model.add(Dense(81, activation='relu'))
-        #self.model.add(Dropout(.50))
-        #self.model.add(Dense(81, activation='relu'))
+        self.model.add(Dense(128, activation='relu'))
+        self.model.add(Dropout(.50))
+        #self.model.add(Dense(128, activation='relu'))
         #self.model.add(Dropout(.50))
         #self.model.add(Dense(128, activation='relu'))
         #self.model.add(Dropout(.50))
